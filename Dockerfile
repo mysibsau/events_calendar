@@ -12,4 +12,4 @@ RUN pipenv install --system --deploy --ignore-pipfile
 VOLUME /src
 COPY src /src
 
-CMD ./manage.py migrate && ./manage.py collectstatic
+CMD ./manage.py migrate && ./manage.py collectstatic --noinput
