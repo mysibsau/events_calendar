@@ -13,6 +13,7 @@ django-filter = "*"
 celery = "*"
 redis = "*"
 django-debug-toolbar = "*"
+whitenoise = "*"
 
 [requires]
 python_version = "3.9"
