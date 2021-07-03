@@ -1,0 +1,14 @@
+name: autodeploy
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  docker-build:
+    name: building
+    runs-on: ubuntu-latest
+    steps:
+      - name: Autodeloying
+      run:
+        docker build - < Dockerfile
