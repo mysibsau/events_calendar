@@ -34,10 +34,20 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'drf_yasg',
     'django_filters',
+    'odoo_auth',
 
     'events',
     'user'
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'user.backends.OdooBackend',
+)
+
+ODOO_SERVER_URL = env.str('ODOO_SERVER_URL')
+ODOO_SERVER_DBNAME = env.str('ODOO_SERVER_DBNAME')
+ODOO_SERVER_PORT = env.int('ODOO_SERVER_PORT', default='443')
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
