@@ -11,21 +11,11 @@ class IsOwnerOrReadOnly(BasePermission):
         )
 
 
-class IsAuthorOrReadOnly(BasePermission):
+class IsConfirmedOrReadOnly(BasePermission):
     def has_permission(self, request, view):
         return bool(
             request.method in SAFE_METHODS or
             request.user and
             request.user.is_authenticated and
-            request.user.type == 1
-        )
-
-
-class IsParticipantOrReadOnly(BasePermission):
-    def has_permission(self, request, view):
-        return bool(
-            request.method in SAFE_METHODS or
-            request.user and
-            request.user.is_authenticated and
-            request.user.type == 0
+            request.user.confirmed
         )

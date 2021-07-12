@@ -19,7 +19,7 @@ class EventViewSet(ModelViewSet):
         avg_rate=Coalesce(Avg('feedback__rating'), 0.0)
     )
     serializer_class = serializers.EventSerializer
-    permission_classes = [permissions.IsAuthorOrReadOnly, permissions.IsOwnerOrReadOnly]
+    permission_classes = [permissions.IsConfirmedOrReadOnly, permissions.IsOwnerOrReadOnly]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filter_fields = ['name']
     search_fields = ['name', 'start_date', 'user__username']
@@ -41,27 +41,3 @@ class MyEventViewSet(EventViewSet):
 class EventDetailView(RetrieveAPIView):
     queryset = models.Event.objects.all().select_related()
     serializer_class = serializers.EventDetailSerializer
-
-
-class RequestViewSet(mixins.CreateModelMixin,
-                     mixins.UpdateModelMixin,
-                     mixins.DestroyModelMixin,
-                     GenericViewSet):
-
-    serializer_class = serializers.RequestSerializer
-    permission_classes = [
-        IsAuthenticated,
-        permissions.IsParticipantOrReadOnly,
-        permissions.IsOwnerOrReadOnly,
-    ]
-
-    def perform_create(self, serializer):
-        serializer.validated_data['user'] = self.request.user
-        serializer.save()
-
-
-class FeedbackViewSet(RequestViewSet):
-    serializer_class = serializers.FeedbackSerializer
-
-    def pre_save(self, obj):
-        obj.file = self.request.FILES.get('file')
