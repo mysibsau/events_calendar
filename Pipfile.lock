@@ -146,10 +146,10 @@
         },
         "django-odoo-auth": {
             "hashes": [
-                "sha256:d8aebebd1f1da774cbfc90d2ec01a80b54d167e24ff2f16db4f1605feab94011"
+                "sha256:baace339101df28aebc26751442cb61d628c2b44b1527ea8fa48a7b38e3620b3"
             ],
             "index": "pypi",
-            "version": "==1.0.3"
+            "version": "==1.0.3.1"
         },
         "djangorestframework": {
             "hashes": [
