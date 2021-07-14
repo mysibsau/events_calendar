@@ -1,43 +1,31 @@
-from django.db.models import Count, Avg
-from django.db.models.functions import Coalesce
 from django.utils import timezone
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins
-from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.generics import RetrieveAPIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
-from . import models, serializers, permissions, services
+from . import models, serializers, permissions
 
 
-class EventViewSet(ModelViewSet):
-    queryset = models.Event.objects.filter(
-        start_date__gt=timezone.now(),
-    ).annotate(
-        num_participants=Count('request', distinct=True),
-        avg_rate=Coalesce(Avg('feedback__rating'), 0.0)
-    )
+class EventViewSet(mixins.ListModelMixin, GenericViewSet):
     serializer_class = serializers.EventSerializer
-    permission_classes = [permissions.IsConfirmedOrReadOnly, permissions.IsOwnerOrReadOnly]
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filter_fields = ['name']
-    search_fields = ['name', 'start_date', 'user__username']
-    ordering_fields = ['name', 'start_date', 'user__username', 'num_participants', 'avg_rate']
+    queryset = models.Event.objects.all()
 
-    def perform_create(self, serializer):
-        serializer.validated_data['user'] = self.request.user
-        serializer.save()
+    def list(self, request, year=timezone.now().year, month=timezone.now().month, *args, **kwargs):
+        """
+        Получение списка мероприятий по датам
 
-
-class MyEventViewSet(EventViewSet):
-    queryset = None
-    permission_classes = [IsAuthenticated, permissions.IsOwnerOrReadOnly]
-
-    def get_queryset(self):
-        return services.gey_my_events(self.request.user)
+        если не передан year или month, то вернет мероприятия на текущий месяц
+        """
+        queryset = models.Event.objects.filter(start_date__year=year, start_date__month=month)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
-class EventDetailView(RetrieveAPIView):
+class EventDetailView(ModelViewSet):
+    """
+    Получение детальной информации
+
+    """
     queryset = models.Event.objects.all().select_related()
     serializer_class = serializers.EventDetailSerializer
+    permission_classes = [permissions.IsOwnerOrReadOnly]
