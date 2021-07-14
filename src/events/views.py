@@ -21,7 +21,11 @@ class EventViewSet(mixins.ListModelMixin, GenericViewSet):
         return Response(serializer.data)
 
 
-class EventDetailView(ModelViewSet):
+class EventDetailView(mixins.CreateModelMixin,
+                   mixins.RetrieveModelMixin,
+                   mixins.UpdateModelMixin,
+                   mixins.DestroyModelMixin,
+                   GenericViewSet):
     """
     Получение детальной информации
 
