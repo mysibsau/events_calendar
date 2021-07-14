@@ -5,7 +5,7 @@ from django.urls import include, path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
-from rest_framework.authtoken.views import obtain_auth_token
+from user.views import obtain_auth_token
 
 from .api import router, urls
 
