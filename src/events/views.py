@@ -29,3 +29,7 @@ class EventDetailView(ModelViewSet):
     queryset = models.Event.objects.all().select_related()
     serializer_class = serializers.EventDetailSerializer
     permission_classes = [permissions.IsOwnerOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.validated_data['responsible'] = self.request.user
+        serializer.save()
