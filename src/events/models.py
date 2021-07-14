@@ -1,84 +1,116 @@
-from datetime import timedelta
-
-from django.utils import timezone
-
-from anymail.exceptions import AnymailRequestsAPIError
 from django.conf import settings
-from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from .tasks import subscribe_to_reminder
 
 User = settings.AUTH_USER_MODEL
 
 
-class Event(models.Model):
-    name = models.CharField('Название', max_length=127)
-    description = models.TextField('Описание')
-    create_date = models.DateTimeField('Дата создания', default=timezone.now, editable=False)
-    start_date = models.DateTimeField('Дата проведения')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Организатор')
+class Direction(models.Model):
+    name = models.CharField('Направление', max_length=128)
+
+    class Meta:
+        verbose_name = 'Направление воспитательной работы'
+        verbose_name_plural = 'Направления воспитательных работ'
 
     def __str__(self):
         return self.name
 
+
+class Level(models.Model):
+    name = models.CharField('Уровень', max_length=32)
+
     class Meta:
-        ordering = ['start_date']
+        verbose_name = 'Уровень мероприятия'
+        verbose_name_plural = 'Уровни мероприятий'
+
+    def __str__(self):
+        return self.name
+
+
+class Role(models.Model):
+    name = models.CharField('Роль', max_length=128)
+
+    class Meta:
+        verbose_name = 'Роль СибГУ'
+        verbose_name_plural = 'Роли СибГУ'
+
+    def __str__(self):
+        return self.name
+
+
+class Format(models.Model):
+    name = models.CharField('Формат', max_length=128)
+
+    class Meta:
+        verbose_name = 'Формат мероприятия'
+        verbose_name_plural = 'Форматы мероприятий'
+
+    def __str__(self):
+        return self.name
+
+
+class Organization(models.Model):
+    name = models.CharField('Название', max_length=128)
+
+    class Meta:
+        verbose_name = 'Организация'
+        verbose_name_plural = 'Организации'
+
+    def __str__(self):
+        return self.name
+
+
+class Event(models.Model):
+    direction = models.ForeignKey(
+        Direction,
+        models.SET_NULL,
+        verbose_name='Направление воспитательной работы',
+        null=True,
+    )
+    name = models.CharField('Название мероприятия', max_length=128)
+    free_plan = models.BooleanField('Включить в сводный план', default=False)
+    level = models.ForeignKey(Level, models.SET_NULL, verbose_name='Уровень мероприятия', null=True)
+    role = models.ForeignKey(Role, models.SET_NULL, verbose_name='Роль СибГУ', null=True)
+    format = models.ForeignKey(Format, models.SET_NULL, verbose_name='Формат мероприятия', null=True)
+    educational_work_in_opop = models.BooleanField('Воспитательная работа в рамках ОПОП', default=False)
+    hours_count = models.PositiveSmallIntegerField('Количество часов', blank=True, null=True)
+    educational_work_outside_opop = models.BooleanField('Воспитательная работа за пределами ОПОП', default=True)
+    start_date = models.DateField('Дата начала')
+    stop_date = models.DateField('Дата окончания', blank=True)
+    place = models.CharField('Место проведения', max_length=256)
+    coverage_participants_plan = models.PositiveSmallIntegerField('Охват участников (план)')
+    number_organizers = models.PositiveSmallIntegerField('Из них организаторов', blank=True, null=True)
+    responsible = models.ForeignKey(User, models.SET_NULL, 'my_events', verbose_name='Ответственное лицо', null=True)
+    organization = models.ForeignKey(
+        Organization,
+        models.SET_NULL,
+        verbose_name='Ответственное подразделение',
+        null=True,
+    )
+    coverage_participants_fact = models.PositiveSmallIntegerField('Охват участников (факт)', blank=True, null=True)
+    links = models.TextField('Ссылки на материалы в интернете о мероприятии (факт)', blank=True)
+    verified = models.ForeignKey(
+        User,
+        models.SET_NULL,
+        'my_verifications',
+        verbose_name='Кто верифицировал',
+        null=True,
+        blank=True
+    )
+    verified_date = models.DateField('Дата верификации', blank=True, null=True)
+
+    class Meta:
         verbose_name = 'Мероприятие'
         verbose_name_plural = 'Мероприятия'
 
-
-class ForeignUserEvent(models.Model):
-    date = models.DateTimeField('Дата создания', default=timezone.now, editable=False)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, verbose_name='Мероприятие')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Участник')
-
-    TITLE_MESSAGE = 'Новое событие'
-    TEXT_MESSAGE = 'С вашим мероприятием {0} что-то случилось'
-
-    class Meta:
-        abstract = True
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-
-        try:
-            self.event.user.email_user(self.TITLE_MESSAGE, self.TEXT_MESSAGE.format(self.event.name))
-        except AnymailRequestsAPIError:
-            pass
+    def __str__(self):
+        return f'{self.name} ({self.start_date})'
 
 
-class Request(ForeignUserEvent):
-    TITLE_MESSAGE = 'Новая заявка'
-    TEXT_MESSAGE = 'На ваше мероприятие {0} зарегистрировался новый пользователь'
+class Comment(models.Model):
+    author = models.ForeignKey(User, models.SET_NULL, 'comments', null=True, verbose_name='Автор')
+    text = models.TextField('Комментарий')
+    event = models.ForeignKey(Event, models.CASCADE, 'comments', verbose_name='Мероприятие')
 
     class Meta:
-        unique_together = ('event', 'user')
-        verbose_name = 'Заявка'
-        verbose_name_plural = 'Заявки'
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        subscribe_to_reminder.apply_async(
-            (self.user.email, self.event.start_date, self.event.name),
-            eta=self.event.start_date - timedelta(days=1)
-         )
-
-
-class Feedback(ForeignUserEvent):
-    TITLE_MESSAGE = 'Новый отзыв'
-    TEXT_MESSAGE = 'Вашему мероприятию {0} оставили новый отзыв'
-
-    file = models.FileField('Дополнительный материал', blank=True, upload_to='feedback')
-    rating = models.IntegerField(
-        verbose_name='Рейтинг',
-        validators=[
-            MinValueValidator(1),
-            MaxValueValidator(5),
-        ],
-        null=True,
-    )
-
-    class Meta:
-        unique_together = ('event', 'user')
-        verbose_name = 'Отзыв'
-        verbose_name_plural = 'Отзывы'
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
