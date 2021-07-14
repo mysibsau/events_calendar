@@ -7,7 +7,7 @@ class IsOwnerOrReadOnly(BasePermission):
             request.method in SAFE_METHODS or
             request.user and
             request.user.is_authenticated and
-            obj.user == request.user
+            (obj.responsible == request.user or request.user.is_staff)
         )
 
 
@@ -17,5 +17,5 @@ class IsConfirmedOrReadOnly(BasePermission):
             request.method in SAFE_METHODS or
             request.user and
             request.user.is_authenticated and
-            request.user.confirmed
+            (request.user.confirmed or request.user.is_staff)
         )
