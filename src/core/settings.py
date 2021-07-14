@@ -1,6 +1,7 @@
 from os.path import join as path_join
 from pathlib import Path
 
+import django_heroku
 import environ
 
 env = environ.Env(
@@ -143,3 +144,4 @@ CELERY_BROKER_URL = env.str("CELERY_BROKER", "redis://localhost:6379/0")
 CELERY_RESULT_BACKEND = env.str("CELERY_BROKER", "redis://localhost:6379/0")
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+django_heroku.settings(locals())

@@ -15,6 +15,9 @@ redis = "*"
 django-debug-toolbar = "*"
 whitenoise = "*"
 django-odoo-auth = "*"
+gunicorn = "*"
+django-heroku = "*"
+psycopg2 = "*"
 
 [requires]
 python_version = "3.9"
