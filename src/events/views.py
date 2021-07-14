@@ -33,3 +33,28 @@ class EventDetailView(ModelViewSet):
     def perform_create(self, serializer):
         serializer.validated_data['responsible'] = self.request.user
         serializer.save()
+
+
+class DirectionViewSet(mixins.ListModelMixin, GenericViewSet):
+    serializer_class = serializers.DirectionSerializer
+    queryset = models.Direction.objects.all()
+
+
+class LevelViewSet(mixins.ListModelMixin, GenericViewSet):
+    serializer_class = serializers.LevelSerializer
+    queryset = models.Level.objects.all()
+
+
+class RoleViewSet(mixins.ListModelMixin, GenericViewSet):
+    serializer_class = serializers.RoleSerializer
+    queryset = models.Role.objects.all()
+
+
+class FormatViewSet(mixins.ListModelMixin, GenericViewSet):
+    serializer_class = serializers.FormatSerializer
+    queryset = models.Format.objects.all()
+
+
+class OrganizationViewSet(mixins.ListModelMixin, GenericViewSet):
+    serializer_class = serializers.OrganizationSerializer
+    queryset = models.Organization.objects.all()

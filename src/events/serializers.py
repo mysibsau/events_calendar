@@ -28,3 +28,33 @@ class EventDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Event
         fields = '__all__'
+
+
+class DirectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Direction
+        fields = '__all__'
+
+
+class LevelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Level
+        fields = '__all__'
+
+
+class RoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Role
+        fields = '__all__'
+
+
+class FormatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Format
+        fields = '__all__'
+
+
+class OrganizationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Organization
+        fields = '__all__'
