@@ -1,31 +1,52 @@
 from django.contrib import admin
-from django.db.models import Count, Avg
 
 from . import models
 
 
 @admin.register(models.Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('name', 'create_date', 'start_date', 'user', 'num_participants', 'avg_rate')
+    list_display = ('name', 'start_date', 'responsible', 'verified_date')
 
-    def num_participants(self, obj):
-        return obj.num_participants
-    num_participants.short_description = 'Заявок'
-
-    def avg_rate(self, obj):
-        return obj.avg_rate
-    avg_rate.short_description = 'Средний балл'
-
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        return qs.annotate(num_participants=Count('request', distinct=True), avg_rate=Avg('feedback__rating'))
-
-
-@admin.register(models.Request)
-class RequestAdmin(admin.ModelAdmin):
-    list_display = ('user', 'event', 'date')
+    fields = (
+        ('name', 'direction'),
+        'free_plan',
+        ('level', 'role', 'format'),
+        ('educational_work_in_opop', 'hours_count'),
+        'educational_work_outside_opop',
+        ('start_date', 'stop_date'),
+        'place',
+        ('coverage_participants_plan', 'number_organizers'),
+        ('responsible', 'organization'),
+        'coverage_participants_fact',
+        'links'
+    )
 
 
-@admin.register(models.Feedback)
-class FeedbackAdmin(admin.ModelAdmin):
-    list_display = ('user', 'event', 'date', 'rating')
+@admin.register(models.Direction)
+class DirectionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
+
+
+@admin.register(models.Level)
+class LevelAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
+
+
+@admin.register(models.Role)
+class RoleAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
+
+
+@admin.register(models.Format)
+class FormatAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
+
+
+@admin.register(models.Organization)
+class OrganizationAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
+
+
+@admin.register(models.Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('id', 'author', 'event')
