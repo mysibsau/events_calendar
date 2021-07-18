@@ -2,8 +2,12 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken as StandartObtainAuthToken
 from rest_framework.response import Response
 
+from .serializer import AuthTokenSerializer
+
 
 class ObtainAuthToken(StandartObtainAuthToken):
+    serializer_class = AuthTokenSerializer
+
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
