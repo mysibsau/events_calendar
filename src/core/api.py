@@ -1,6 +1,8 @@
+from django.urls import path, include
 from rest_framework.routers import SimpleRouter
 
 from events import views as event_views
+from user.views import ProfileView
 
 router = SimpleRouter()
 router.register('events', event_views.EventViewSet)
@@ -12,7 +14,9 @@ router.register('reference/roles', event_views.RoleViewSet)
 router.register('reference/formats', event_views.FormatViewSet)
 router.register('reference/organizations', event_views.OrganizationViewSet)
 
+
 urls = [
+    path('user/', ProfileView.as_view()),
 ]
 
 __all__ = [

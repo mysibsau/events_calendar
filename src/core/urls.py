@@ -19,6 +19,8 @@ schema_view = get_schema_view(
    permission_classes=(permissions.AllowAny,),
 )
 
+admin.site.site_header = 'Администрирование календаря мероприятий'
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),

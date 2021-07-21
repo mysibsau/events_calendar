@@ -1,8 +1,12 @@
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken as StandartObtainAuthToken
+from rest_framework.generics import ListAPIView, GenericAPIView
+from rest_framework.mixins import RetrieveModelMixin
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .serializer import AuthTokenSerializer
+from .serializer import AuthTokenSerializer, ProfileSerializer
+from .models import User
 
 
 class ObtainAuthToken(StandartObtainAuthToken):
@@ -17,7 +21,17 @@ class ObtainAuthToken(StandartObtainAuthToken):
             'token': token.key,
             'confirmed': user.confirmed,
             'name': user.first_name,
+            'is_staff': user.is_staff,
         })
 
 
 obtain_auth_token = ObtainAuthToken.as_view()
+
+
+class ProfileView(RetrieveModelMixin, GenericAPIView):
+    serializer_class = ProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data)
