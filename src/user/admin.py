@@ -9,7 +9,7 @@ from . import models
 
 @admin.register(models.User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'get_full_name', 'email', 'confirmed', 'user_actions')
+    list_display = ('pk', 'get_full_name', 'email', 'is_staff', 'user_actions')
 
     def do_confirm(self, request, user_id, *args, **kwargs):
         models.User.objects.filter(id=user_id).update(confirmed=True)
