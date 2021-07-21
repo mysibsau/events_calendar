@@ -6,7 +6,7 @@ from rest_framework.authtoken.models import Token
 
 
 class User(AbstractUser):
-    confirmed = models.IntegerField('Подтвержден', default=False)
+    confirmed = models.BooleanField('Подтвержден', default=False)
 
     def __str__(self):
         return self.get_full_name()
