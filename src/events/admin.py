@@ -32,7 +32,10 @@ class EventAdmin(admin.ModelAdmin):
                 '<a class="button" href="{}">Верифицировать</a>',
                 reverse('admin:verification', args=[obj.pk])
             )
-        return obj.verified.first_name
+        return format_html(
+            obj.verified.first_name + '<a class="deletelink" href="{}"></a>',
+            reverse('admin:cancle_verificate', args=[obj.pk])
+        )
 
     event_actions.short_description = 'Верификация'
     event_actions.allow_tags = True
@@ -45,13 +48,25 @@ class EventAdmin(admin.ModelAdmin):
                 self.admin_site.admin_view(self.verificate),
                 name='verification',
             ),
+            url(
+                r'^(?P<event_id>.+)/cancle_verificate/$',
+                self.admin_site.admin_view(self.cancle_verificate),
+                name='cancle_verificate',
+            ),
         ]
         return custom_urls + urls
 
     def verificate(self, request, event_id, *args, **kwargs):
         models.Event.objects.filter(id=event_id).update(
             verified=request.user,
-            verified_date=timezone.now()
+            verified_date=timezone.now(),
+        )
+        return HttpResponseRedirect("../../")
+
+    def cancle_verificate(self, request, event_id, *args, **kwargs):
+        models.Event.objects.filter(id=event_id).update(
+            verified=None,
+            verified_date=None,
         )
         return HttpResponseRedirect("../../")
 
