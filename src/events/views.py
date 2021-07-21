@@ -42,7 +42,7 @@ class EventDetailView(mixins.CreateModelMixin,
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         data = serializer.data
-        data['can_edit'] = request.user.is_staff or instance.user == request.user
+        data['can_edit'] = request.user.is_staff or instance.responsible == request.user
         return Response(data)
 
     def perform_create(self, serializer):
