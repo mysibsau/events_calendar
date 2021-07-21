@@ -38,6 +38,13 @@ class EventDetailView(mixins.CreateModelMixin,
     serializer_class = serializers.EventDetailSerializer
     permission_classes = [permissions.IsOwnerOrReadOnly]
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        data = serializer.data
+        data['can_edit'] = request.user.is_staff or instance.user == request.user
+        return Response(data)
+
     def perform_create(self, serializer):
         serializer.validated_data['responsible'] = self.request.user
         serializer.save()
