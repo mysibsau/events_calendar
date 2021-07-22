@@ -1,6 +1,8 @@
+import csv
+
 from django.conf.urls import url
 from django.contrib import admin
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import format_html
@@ -15,6 +17,8 @@ class EventAdmin(admin.ModelAdmin):
     list_filter = (
         ('start_date', DateRangeFilter),
     )
+
+    actions = ['export_as_csv']
 
     fields = (
         ('name', 'direction'),
@@ -73,6 +77,24 @@ class EventAdmin(admin.ModelAdmin):
             verified_date=None,
         )
         return HttpResponseRedirect("../../")
+
+    def export_as_csv(self, request, queryset):
+        meta = self.model._meta
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename={meta.verbose_name_plural}_{timezone.localtime()}.csv'
+
+        writer = csv.writer(response)
+        writer.writerow(field.verbose_name for field in meta.fields)
+
+        for obj in queryset:
+            writer.writerow(
+                obj.__getattribute__(field.name)
+                for field in meta.fields
+            )
+
+        return response
+
+    export_as_csv.short_description = 'Экспортировать в csv'
 
 
 @admin.register(models.Direction)
