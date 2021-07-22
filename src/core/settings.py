@@ -14,6 +14,9 @@ SECRET_KEY = env.str('SECRET_KEY', default='s3cr3t')
 
 DEBUG = env.bool('DEBUG', default=False)
 
+# Disable built-in ./manage.py test command in favor of pytest
+TEST_RUNNER = 'core.test.disable_test_command_runner.DisableTestCommandRunner'
+
 if DEBUG:
     import mimetypes
     mimetypes.add_type("application/javascript", ".js", True)

@@ -22,3 +22,6 @@ django-cors-headers = "*"
 
 [requires]
 python_version = "3.9"
+
+[dev-packages]
+pytest-django = "*"
