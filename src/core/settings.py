@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django_filters',
     'odoo_auth',
     'corsheaders',
+    'rangefilter',
 
     'events',
     'user'

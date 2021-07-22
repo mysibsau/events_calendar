@@ -19,6 +19,7 @@ gunicorn = "*"
 django-heroku = "*"
 psycopg2 = "*"
 django-cors-headers = "*"
+django-admin-rangefilter = "*"
 
 [requires]
 python_version = "3.9"

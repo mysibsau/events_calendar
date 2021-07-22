@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import format_html
+from rangefilter.filter import DateRangeFilter
 
 from . import models
 
@@ -11,6 +12,9 @@ from . import models
 @admin.register(models.Event)
 class EventAdmin(admin.ModelAdmin):
     list_display = ('name', 'start_date', 'responsible', 'verified_date', 'event_actions')
+    list_filter = (
+        ('start_date', DateRangeFilter),
+    )
 
     fields = (
         ('name', 'direction'),
