@@ -1,62 +1,13 @@
 from django.conf import settings
 from django.db import models
 
+from .direction import Direction
+from .format import Format
+from .level import Level
+from .organization import Organization
+from .role import Role
+
 User = settings.AUTH_USER_MODEL
-
-
-class Direction(models.Model):
-    name = models.CharField('Направление', max_length=128)
-
-    class Meta:
-        verbose_name = 'Направление воспитательной работы'
-        verbose_name_plural = 'Направления воспитательных работ'
-
-    def __str__(self):
-        return self.name
-
-
-class Level(models.Model):
-    name = models.CharField('Уровень', max_length=32)
-
-    class Meta:
-        verbose_name = 'Уровень мероприятия'
-        verbose_name_plural = 'Уровни мероприятий'
-
-    def __str__(self):
-        return self.name
-
-
-class Role(models.Model):
-    name = models.CharField('Роль', max_length=128)
-
-    class Meta:
-        verbose_name = 'Роль СибГУ'
-        verbose_name_plural = 'Роли СибГУ'
-
-    def __str__(self):
-        return self.name
-
-
-class Format(models.Model):
-    name = models.CharField('Формат', max_length=128)
-
-    class Meta:
-        verbose_name = 'Формат мероприятия'
-        verbose_name_plural = 'Форматы мероприятий'
-
-    def __str__(self):
-        return self.name
-
-
-class Organization(models.Model):
-    name = models.CharField('Название', max_length=128)
-
-    class Meta:
-        verbose_name = 'Организация'
-        verbose_name_plural = 'Организации'
-
-    def __str__(self):
-        return self.name
 
 
 class Event(models.Model):
@@ -104,13 +55,3 @@ class Event(models.Model):
 
     def __str__(self):
         return f'{self.name} ({self.start_date})'
-
-
-class Comment(models.Model):
-    author = models.ForeignKey(User, models.SET_NULL, 'comments', null=True, verbose_name='Автор')
-    text = models.TextField('Комментарий')
-    event = models.ForeignKey(Event, models.CASCADE, 'comments', verbose_name='Мероприятие')
-
-    class Meta:
-        verbose_name = 'Комментарий'
-        verbose_name_plural = 'Комментарии'

@@ -1,8 +1,10 @@
+from django.conf import settings
 from django.db.models import QuerySet, Count, Avg
 from django.db.models.functions import Coalesce
 
-from user.models import User
 from .models import Event
+
+User = settings.AUTH_USER_MODEL
 
 
 def gey_my_events(user: User) -> QuerySet[Event]:
