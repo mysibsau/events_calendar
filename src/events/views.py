@@ -1,8 +1,8 @@
+from django.db.models import Q
 from django.utils import timezone
 from rest_framework import mixins
 from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet, ModelViewSet
-from django.db.models import Q
+from rest_framework.viewsets import GenericViewSet
 
 from . import models, serializers, permissions
 
@@ -47,6 +47,8 @@ class EventDetailView(mixins.CreateModelMixin,
 
     def perform_create(self, serializer):
         serializer.validated_data['responsible'] = self.request.user
+        if not serializer.validated_data.get('stop_date'):
+            serializer.validated_data['stop_date'] = serializer.validated_data['start_date']
         serializer.save()
 
 
