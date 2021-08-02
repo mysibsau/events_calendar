@@ -1,10 +1,13 @@
 from django.db.models import Q
 from django.utils import timezone
-from rest_framework import mixins
+from rest_framework import mixins, status
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
 from . import models, serializers, permissions
+from .services import verification
 
 
 class EventViewSet(mixins.ListModelMixin, GenericViewSet):
@@ -75,3 +78,17 @@ class FormatViewSet(mixins.ListModelMixin, GenericViewSet):
 class OrganizationViewSet(mixins.ListModelMixin, GenericViewSet):
     serializer_class = serializers.OrganizationSerializer
     queryset = models.Organization.objects.all()
+
+
+class VerifyEvent(APIView):
+    permission_classes = [IsAdminUser]
+
+    def post(self, request, event_id, *args, **kwargs):
+        verification.verify_event(event_id, request.user)
+
+        return Response(status=status.HTTP_200_OK)
+
+    def delete(self, request, event_id, *args, **kwargs):
+        verification.cancel_event_verification(event_id)
+
+        return Response(status=status.HTTP_200_OK)
