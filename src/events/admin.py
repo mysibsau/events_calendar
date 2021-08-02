@@ -1,14 +1,13 @@
-import csv
-
 from django.conf.urls import url
 from django.contrib import admin
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.html import format_html
 from rangefilter.filters import DateRangeFilter
 
 from . import models
+from .services import verification
+from .services.exporters import export_as_csv
 
 
 @admin.register(models.Event)
@@ -65,34 +64,15 @@ class EventAdmin(admin.ModelAdmin):
         return custom_urls + urls
 
     def verificate(self, request, event_id, *args, **kwargs):
-        models.Event.objects.filter(id=event_id).update(
-            verified=request.user,
-            verified_date=timezone.now(),
-        )
+        verification.verify_event(event_id, request.user)
         return HttpResponseRedirect("../../")
 
     def cancle_verificate(self, request, event_id, *args, **kwargs):
-        models.Event.objects.filter(id=event_id).update(
-            verified=None,
-            verified_date=None,
-        )
+        verification.cancel_event_verification(event_id)
         return HttpResponseRedirect("../../")
 
     def export_as_csv(self, request, queryset):
-        meta = self.model._meta
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = f'attachment; filename={meta.verbose_name_plural}_{timezone.localtime()}.csv'
-
-        writer = csv.writer(response)
-        writer.writerow(field.verbose_name for field in meta.fields)
-
-        for obj in queryset:
-            writer.writerow(
-                obj.__getattribute__(field.name)
-                for field in meta.fields
-            )
-
-        return response
+        return export_as_csv(queryset)
 
     export_as_csv.short_description = 'Экспортировать в csv'
 
