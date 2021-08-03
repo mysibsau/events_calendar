@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 
 from . import models
+from .services import confirm
 
 
 @admin.register(models.User)
@@ -12,11 +13,11 @@ class UserAdmin(admin.ModelAdmin):
     list_display = ('pk', 'get_full_name', 'email', 'is_staff', 'user_actions')
 
     def do_confirm(self, request, user_id, *args, **kwargs):
-        models.User.objects.filter(id=user_id).update(confirmed=True)
+        confirm.confirm_user(user_id)
         return HttpResponseRedirect("../../")
 
     def do_ban(self, request, user_id, *args, **kwargs):
-        models.User.objects.filter(id=user_id).update(is_active=False)
+        confirm.ban_user(user_id)
         return HttpResponseRedirect("../../")
 
     def get_urls(self):
