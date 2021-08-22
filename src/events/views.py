@@ -123,7 +123,7 @@ class CommentViewSet(mixins.CreateModelMixin,
     serializer_class = serializers.CommentSerializer
 
     def perform_create(self, serializer):
-        serializer.validated_data['user'] = self.request.user
+        serializer.validated_data['author'] = self.request.user
         serializer.save()
 
     def update(self, request, *args, **kwargs):

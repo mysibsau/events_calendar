@@ -14,11 +14,21 @@ class EventSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    author = serializers.PrimaryKeyRelatedField(
+        read_only=True,
+        label='Id автора'
+    )
+    author_name = serializers.CharField(
+        source='author.first_name',
+        read_only=True,
+        label='Имя отчество автора',
+        allow_blank=True,
+    )
+    text = serializers.CharField(allow_blank=False)
 
     class Meta:
         model = models.Comment
-        fields = '__all__'
+        fields = ('id', 'author', 'author_name', 'text', 'event', 'date')
 
 
 class EventDetailSerializer(serializers.ModelSerializer):

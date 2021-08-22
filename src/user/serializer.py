@@ -16,6 +16,10 @@ class AuthTokenSerializer(AuthTokenSerializerDefault):
         label="является ли сотрудником",
         read_only=True,
     )
+    id = serializers.IntegerField(
+        label="Id пользователя",
+        read_only=True,
+    )
 
 
 class ProfileSerializer(serializers.ModelSerializer):
