@@ -1,9 +1,10 @@
 from django.db.models import Q
 from django.utils import timezone
 from rest_framework import mixins, status
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.decorators import action
 from rest_framework.viewsets import GenericViewSet
 
 from . import models, serializers, permissions
@@ -13,6 +14,11 @@ from .services import verification
 class EventViewSet(mixins.ListModelMixin, GenericViewSet):
     serializer_class = serializers.EventSerializer
     queryset = models.Event.objects.all()
+
+    def get_permissions(self):
+        if self.action == 'my':
+            return [IsAuthenticated()]
+        return super().get_permissions()
 
     def list(self, request, year=timezone.now().year, month=timezone.now().month, *args, **kwargs):
         """
@@ -27,12 +33,17 @@ class EventViewSet(mixins.ListModelMixin, GenericViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
+    @action(detail=False)
+    def my(self, request):
+        self.queryset = models.Event.objects.filter(responsible=request.user)
+        return super().list(request)
+
 
 class EventDetailView(mixins.CreateModelMixin,
-                   mixins.RetrieveModelMixin,
-                   mixins.UpdateModelMixin,
-                   mixins.DestroyModelMixin,
-                   GenericViewSet):
+                      mixins.RetrieveModelMixin,
+                      mixins.UpdateModelMixin,
+                      mixins.DestroyModelMixin,
+                      GenericViewSet):
     """
     Получение детальной информации
 
