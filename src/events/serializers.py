@@ -1,5 +1,5 @@
-from enum import Flag
-from rest_framework import serializers
+from django.db.models import fields
+from rest_framework import serializers, fields
 
 from . import models
 
@@ -14,6 +14,8 @@ class EventSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+
     class Meta:
         model = models.Comment
         fields = '__all__'

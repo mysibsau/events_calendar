@@ -21,6 +21,7 @@ class ObtainAuthToken(StandartObtainAuthToken):
             'confirmed': user.confirmed,
             'name': user.first_name,
             'is_staff': user.is_staff,
+            'id': user.id,
         })
 
 

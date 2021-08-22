@@ -112,3 +112,20 @@ class VerifyEvent(APIView):
         verification.cancel_event_verification(event_id)
 
         return Response(status=status.HTTP_200_OK)
+
+
+class CommentViewSet(mixins.CreateModelMixin,
+                     mixins.UpdateModelMixin,
+                     mixins.DestroyModelMixin,
+                     GenericViewSet):
+    permission_classes = [IsAuthenticated, permissions.IsOwnerCommentOrReadOnly]
+    queryset = models.Comment.objects.all()
+    serializer_class = serializers.CommentSerializer
+
+    def perform_create(self, serializer):
+        serializer.validated_data['user'] = self.request.user
+        serializer.save()
+
+    def update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        return super().update(request, *args, **kwargs)
