@@ -2,10 +2,11 @@ from django.urls import path, include
 from rest_framework.routers import SimpleRouter
 
 from events import views as event_views
-from user.views import ProfileView
+from user.views import ProfileView, UserViewSet
 
 router = SimpleRouter()
 router.register('events', event_views.EventViewSet)
+router.register('users', UserViewSet)
 router.register('events/(?P<month>[0-9]{2}).(?P<year>[0-9]{4})', event_views.EventViewSet)
 router.register('event', event_views.EventDetailView)
 router.register('comment', event_views.CommentViewSet)

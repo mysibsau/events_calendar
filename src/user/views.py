@@ -1,11 +1,14 @@
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken as StandartObtainAuthToken
 from rest_framework.generics import GenericAPIView
-from rest_framework.mixins import RetrieveModelMixin
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.viewsets import GenericViewSet
+from rest_framework.mixins import RetrieveModelMixin, ListModelMixin, RetrieveModelMixin
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.decorators import action
 
-from .serializer import AuthTokenSerializer, ProfileSerializer
+from .serializer import AuthTokenSerializer, ProfileSerializer, UserSerializer
+from . import models, services
 
 
 class ObtainAuthToken(StandartObtainAuthToken):
@@ -35,3 +38,19 @@ class ProfileView(RetrieveModelMixin, GenericAPIView):
     def get(self, request, *args, **kwargs):
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
+
+
+class UserViewSet(RetrieveModelMixin, ListModelMixin, GenericViewSet):
+    serializer_class = UserSerializer
+    permission_classes = [IsAdminUser]
+    queryset = models.User.objects.all()
+
+    @action(detail=True)
+    def confirmed(self, request, pk):
+        services.confirm.confirm_user(pk)
+        return super().retrieve(request)
+
+    @action(detail=True)
+    def ban(self, request, pk):
+        services.confirm.ban_user(pk)
+        return super().retrieve(request)

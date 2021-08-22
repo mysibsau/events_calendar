@@ -32,3 +32,12 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('name', 'confirmed', 'is_staff')
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            'id', 'username', 'first_name', 'last_name', 'email',
+            'is_staff', 'is_active', 'confirmed'
+        )
