@@ -6,6 +6,8 @@ from rest_framework.mixins import RetrieveModelMixin, ListModelMixin, RetrieveMo
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.pagination import PageNumberPagination
+from rest_framework import filters
 
 from .serializer import AuthTokenSerializer, ProfileSerializer, UserSerializer
 from . import models, services
@@ -40,10 +42,18 @@ class ProfileView(RetrieveModelMixin, GenericAPIView):
         return Response(serializer.data)
 
 
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+
+
 class UserViewSet(RetrieveModelMixin, ListModelMixin, GenericViewSet):
     serializer_class = UserSerializer
     permission_classes = [IsAdminUser]
     queryset = models.User.objects.all()
+    pagination_class = StandardResultsSetPagination
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ['username', 'email']
 
     @action(detail=True)
     def confirmed(self, request, pk):
