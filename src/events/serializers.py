@@ -1,12 +1,16 @@
+from enum import Flag
 from rest_framework import serializers
 
 from . import models
 
 
 class EventSerializer(serializers.ModelSerializer):
+    # TODO: Эта дичь может возвращать none, нужно пофиксить
+    is_verified = serializers.BooleanField(read_only=True, source='verified')
+
     class Meta:
         model = models.Event
-        fields = ('id', 'name', 'start_date', 'stop_date')
+        fields = ('id', 'name', 'start_date', 'stop_date', 'is_verified')
 
 
 class CommentSerializer(serializers.ModelSerializer):

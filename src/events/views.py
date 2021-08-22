@@ -14,11 +14,13 @@ from .services import verification
 class EventViewSet(mixins.ListModelMixin, GenericViewSet):
     serializer_class = serializers.EventSerializer
     queryset = models.Event.objects.all()
+    permissions = {
+        'my': [IsAuthenticated()],
+        'unverified': [IsAdminUser()],
+    }
 
     def get_permissions(self):
-        if self.action == 'my':
-            return [IsAuthenticated()]
-        return super().get_permissions()
+        return self.permissions.get(self.action, super().get_permissions())
 
     def list(self, request, year=timezone.now().year, month=timezone.now().month, *args, **kwargs):
         """
@@ -30,12 +32,19 @@ class EventViewSet(mixins.ListModelMixin, GenericViewSet):
             Q(start_date__year=year, start_date__month=month) |
             Q(stop_date__year=year, stop_date__month=month)
         )
+        if not request.user.is_staff:
+            queryset = queryset.filter(verified__isnull=False)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
     @action(detail=False)
     def my(self, request):
         self.queryset = models.Event.objects.filter(responsible=request.user)
+        return super().list(request)
+
+    @action(detail=False)
+    def unverified(self, request):
+        self.queryset = models.Event.objects.filter(verified__isnull=True)
         return super().list(request)
 
 
