@@ -32,7 +32,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class EventDetailSerializer(serializers.ModelSerializer):
-    responsible = serializers.StringRelatedField(source='responsible.first_name', read_only=True)
+    responsible = serializers.CharField(read_only=True)
     verified = serializers.StringRelatedField(source='verified.first_name', read_only=True)
     comments = CommentSerializer(many=True, read_only=True)
     can_edit = serializers.BooleanField(read_only=True, label='Может ли данный пользователь редактировать мероприятие')

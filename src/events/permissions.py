@@ -7,7 +7,7 @@ class IsOwnerOrReadOnly(BasePermission):
             request.method in SAFE_METHODS or
             request.user and
             request.user.is_authenticated and
-            (obj.responsible == request.user or request.user.is_staff)
+            (obj.author == request.user or request.user.is_staff)
         )
 
 

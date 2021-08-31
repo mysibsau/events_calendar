@@ -9,6 +9,8 @@ from rest_framework.viewsets import GenericViewSet
 
 from . import models, serializers, permissions
 from .services import verification
+from rest_framework.decorators import api_view
+from datetime import datetime
 
 
 class EventViewSet(mixins.ListModelMixin, GenericViewSet):
@@ -39,7 +41,7 @@ class EventViewSet(mixins.ListModelMixin, GenericViewSet):
 
     @action(detail=False)
     def my(self, request):
-        self.queryset = models.Event.objects.filter(responsible=request.user)
+        self.queryset = models.Event.objects.filter(author=request.user)
         return super().list(request)
 
     @action(detail=False)
@@ -65,11 +67,11 @@ class EventDetailView(mixins.CreateModelMixin,
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         data = serializer.data
-        data['can_edit'] = request.user.is_staff or instance.responsible == request.user
+        data['can_edit'] = request.user.is_staff or instance.author == request.user
         return Response(data)
 
     def perform_create(self, serializer):
-        serializer.validated_data['responsible'] = self.request.user
+        serializer.validated_data['author'] = self.request.user
         if not serializer.validated_data.get('stop_date'):
             serializer.validated_data['stop_date'] = serializer.validated_data['start_date']
         serializer.save()
@@ -129,3 +131,25 @@ class CommentViewSet(mixins.CreateModelMixin,
     def update(self, request, *args, **kwargs):
         kwargs['partial'] = True
         return super().update(request, *args, **kwargs)
+
+
+@api_view(['GET'])
+def load(request):
+    file = open('events/data.csv')
+    file.readline()
+    for row in file.readlines():
+        direction, name, data, place, coverage_participants_plan, \
+            responsible, position = row.split('$')
+
+        direction, _ = models.Direction.objects.get_or_create(name=direction)
+
+        models.Event.objects.get_or_create(
+            direction=direction,
+            name=name,
+            place=place,
+            coverage_participants_plan=coverage_participants_plan,
+            responsible=responsible,
+            position=position,
+            start_date=datetime.today().date(),
+            stop_date=datetime.today().date(),
+        )

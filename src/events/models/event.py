@@ -16,12 +16,13 @@ class Event(models.Model):
         models.SET_NULL,
         verbose_name='Направление воспитательной работы',
         null=True,
+        blank=True,
     )
     name = models.CharField('Название мероприятия', max_length=128)
     free_plan = models.BooleanField('Включить в сводный план', default=False)
-    level = models.ForeignKey(Level, models.SET_NULL, verbose_name='Уровень мероприятия', null=True)
-    role = models.ForeignKey(Role, models.SET_NULL, verbose_name='Роль СибГУ', null=True)
-    format = models.ForeignKey(Format, models.SET_NULL, verbose_name='Формат мероприятия', null=True)
+    level = models.ForeignKey(Level, models.SET_NULL, verbose_name='Уровень мероприятия', null=True, blank=True)
+    role = models.ForeignKey(Role, models.SET_NULL, verbose_name='Роль СибГУ', null=True, blank=True)
+    format = models.ForeignKey(Format, models.SET_NULL, verbose_name='Формат мероприятия', null=True, blank=True)
     educational_work_in_opop = models.BooleanField('Воспитательная работа в рамках ОПОП', default=False)
     hours_count = models.PositiveSmallIntegerField('Количество часов', blank=True, null=True)
     educational_work_outside_opop = models.BooleanField('Воспитательная работа за пределами ОПОП', default=True)
@@ -30,12 +31,15 @@ class Event(models.Model):
     place = models.CharField('Место проведения', max_length=256)
     coverage_participants_plan = models.PositiveSmallIntegerField('Охват участников (план)')
     number_organizers = models.PositiveSmallIntegerField('Из них организаторов', blank=True, null=True)
-    responsible = models.ForeignKey(User, models.SET_NULL, 'my_events', verbose_name='Ответственное лицо', null=True)
+    responsible = models.CharField('Ответсвенное лицо', max_length=512)
+    position = models.CharField('Должность', max_length=512, blank=True)
+    author = models.ForeignKey(User, models.SET_NULL, 'my_events', verbose_name='Автор', null=True)
     organization = models.ForeignKey(
         Organization,
         models.SET_NULL,
         verbose_name='Ответственное подразделение',
         null=True,
+        blank=True,
     )
     coverage_participants_fact = models.PositiveSmallIntegerField('Охват участников (факт)', blank=True, null=True)
     links = models.TextField('Ссылки на материалы в интернете о мероприятии (факт)', blank=True)

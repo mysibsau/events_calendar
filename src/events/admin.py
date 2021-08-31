@@ -12,7 +12,7 @@ from .services.exporters import export_as_csv
 
 @admin.register(models.Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('name', 'start_date', 'responsible', 'verified_date', 'event_actions')
+    list_display = ('name', 'start_date', 'responsible', 'verified_date', 'event_actions', 'author')
     list_filter = (
         ('start_date', DateRangeFilter),
     )
@@ -28,7 +28,7 @@ class EventAdmin(admin.ModelAdmin):
         ('start_date', 'stop_date'),
         'place',
         ('coverage_participants_plan', 'number_organizers'),
-        ('responsible', 'organization'),
+        ('responsible', 'position', 'organization'),
         'coverage_participants_fact',
         'links'
     )
@@ -75,6 +75,10 @@ class EventAdmin(admin.ModelAdmin):
         return export_as_csv(queryset)
 
     export_as_csv.short_description = 'Экспортировать в csv'
+
+    def save_model(self, request, obj, *args) -> None:
+        obj.author = request.user
+        return super().save_model(request, obj, *args)
 
 
 @admin.register(models.Direction)
