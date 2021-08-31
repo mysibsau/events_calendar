@@ -18,7 +18,7 @@ class Event(models.Model):
         null=True,
         blank=True,
     )
-    name = models.CharField('Название мероприятия', max_length=128)
+    name = models.CharField('Название мероприятия', max_length=512)
     free_plan = models.BooleanField('Включить в сводный план', default=False)
     level = models.ForeignKey(Level, models.SET_NULL, verbose_name='Уровень мероприятия', null=True, blank=True)
     role = models.ForeignKey(Role, models.SET_NULL, verbose_name='Роль СибГУ', null=True, blank=True)
