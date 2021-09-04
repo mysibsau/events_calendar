@@ -16,7 +16,7 @@ services:
       - MAILGUN_SENDER_DOMAIN={MAILGUN_SENDER_DOMAIN}
 
   redis:
-    image: redis:6.2.4-alpine
+    image: redis:6.2.5-alpine
 
   celery:
     build: .
