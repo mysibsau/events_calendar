@@ -1,34 +1,40 @@
 version: "3.8"
-
 services:
-  web:
-    container_name: backend
-    build: .
-    command: python manage.py runserver 0.0.0.0:8000
-    ports:
-      - 8000:8000
-    env_file:
-      - src/.env
-    environment:
-      - SECRET_KEY={SECRET_KEY}
-      - DEBUG={DEBUG}
-      - MAILGUN_API_KEY={MAILGUN_API_KEY}
-      - MAILGUN_SENDER_DOMAIN={MAILGUN_SENDER_DOMAIN}
+    database:
+        container_name: calendar_mysibsau_database
+        image: postgres:13.4-alpine
+        restart: always
+        env_file: src/.env
+        volumes:
+            - ./volumes/db/data:/var/lib/database/data
 
-  redis:
-    image: redis:6.2.4-alpine
+    app:
+        build: .
+        container_name: calendar_mysibsau_backend
+        env_file: src/.env
+        restart: always
+        volumes:
+            - ./src:/app
+            - ./volumes/media:/media
+            - ./volumes/static:/static
+        depends_on:
+            - database
+        ports: 
+            - "127.0.0.1:8000:8000"
+        command: bash -c "
+            python manage.py migrate &&
+            python manage.py collectstatic --noinput &&
+            gunicorn --bind 0.0.0.0:8000
+                     --timeout 600
+                     --log-level debug
+                     --reload
+                     --max-requests 100
+                     --workers 4 core.wsgi:application"
+        labels:
+            - traefik.http.routers.calendar_mysibsau_backend.rule=Host(`api-calendar.mysibsau.ru`)
+            - traefik.http.routers.calendar_mysibsau_backend.entrypoints=web
 
-  celery:
-    build: .
-    command: celery -A core worker -l INFO
-    depends_on:
-      - web
-      - redis
-    env_file:
-      - src/.env
-    environment:
-      - SECRET_KEY={SECRET_KEY}
-      - DEBUG={DEBUG}
-      - MAILGUN_API_KEY={MAILGUN_API_KEY}
-      - MAILGUN_SENDER_DOMAIN={MAILGUN_SENDER_DOMAIN}
-
+networks:
+    default:
+        name: traefik_mysibsau
+        external: false
