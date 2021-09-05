@@ -5,7 +5,6 @@ from django.urls import include, path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
-from events import views
 
 from user.views import obtain_auth_token
 from user.forms import AdminAuthenticationForm
@@ -27,9 +26,7 @@ admin.site.login_form = AdminAuthenticationForm
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('v1/auth', obtain_auth_token),
-    path('v1/', include(router.urls)),
     path('v1/', include(urls)),
-    path('load/', views.load),
     path('docs/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
 

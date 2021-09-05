@@ -20,9 +20,4 @@ router.register('reference/organizations', event_views.OrganizationViewSet)
 urls = [
     path('user/', ProfileView.as_view()),
     path('event/vereficate/<int:event_id>', event_views.VerifyEvent.as_view()),
-]
-
-__all__ = [
-    router,
-    urls,
-]
+] + router.urls

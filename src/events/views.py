@@ -131,25 +131,3 @@ class CommentViewSet(mixins.CreateModelMixin,
     def update(self, request, *args, **kwargs):
         kwargs['partial'] = True
         return super().update(request, *args, **kwargs)
-
-
-@api_view(['GET'])
-def load(request):
-    file = open('events/data.csv')
-    file.readline()
-    for row in file.readlines():
-        direction, name, data, place, coverage_participants_plan, \
-            responsible, position = row.split('$')
-
-        direction, _ = models.Direction.objects.get_or_create(name=direction)
-
-        models.Event.objects.get_or_create(
-            direction=direction,
-            name=name,
-            place=place,
-            coverage_participants_plan=coverage_participants_plan,
-            responsible=responsible,
-            position=position,
-            start_date=datetime.today().date(),
-            stop_date=datetime.today().date(),
-        )
