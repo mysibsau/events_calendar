@@ -1,6 +1,6 @@
 version: "3.8"
 services:
-    database:
+    calendar_database:
         container_name: calendar_mysibsau_database
         image: postgres:13.4-alpine
         restart: always
@@ -8,7 +8,7 @@ services:
         volumes:
             - ./volumes/db/data:/var/lib/database/data
 
-    app:
+    calendar_app:
         build: .
         container_name: calendar_mysibsau_backend
         env_file: src/.env
@@ -18,7 +18,7 @@ services:
             - ./volumes/media:/media
             - ./volumes/static:/static
         depends_on:
-            - database
+            - calendar_database
         ports: 
             - "127.0.0.1:8000:8000"
         command: bash -c "
