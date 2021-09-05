@@ -33,7 +33,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'debug_toolbar',
-    'anymail',
     'rest_framework',
     'rest_framework.authtoken',
     'drf_yasg',
@@ -94,9 +93,13 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': env.str('POSTGRES_USER', 'postgres'),
+        'HOST': 'database',
+        'PASSWORD': env.str('POSTGRES_PASSWORD', 'postgres'),
+        'PORT': 5432,
+    },
 }
 
 
@@ -140,17 +143,6 @@ MEDIA_ROOT = path_join(BASE_DIR, 'resources/media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'user.User'
-
-
-EMAIL_BACKEND = 'anymail.backends.mailgun.EmailBackend'
-ANYMAIL = {
-    'MAILGUN_API_KEY': env.str('MAILGUN_API_KEY'),
-    'MAILGUN_SENDER_DOMAIN': env.str('MAILGUN_SENDER_DOMAIN')
-}
-DEFAULT_FROM_EMAIL = 'info@' + env.str('MAILGUN_SENDER_DOMAIN')
-
-CELERY_BROKER_URL = env.str("CELERY_BROKER", "redis://localhost:6379/0")
-CELERY_RESULT_BACKEND = env.str("CELERY_BROKER", "redis://localhost:6379/0")
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 django_heroku.settings(locals())
