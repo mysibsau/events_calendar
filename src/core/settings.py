@@ -96,7 +96,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': env.str('POSTGRES_USER', 'postgres'),
-        'HOST': 'database',
+        'HOST': 'calendar_database',
         'PASSWORD': env.str('POSTGRES_PASSWORD', 'postgres'),
         'PORT': 5432,
     },

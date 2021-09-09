@@ -31,15 +31,22 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ('id', 'author', 'author_name', 'text', 'event', 'date')
 
 
+class ImportantDateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ImportantDate
+        fields = ('name', 'date')
+
+
 class EventDetailSerializer(serializers.ModelSerializer):
     responsible = serializers.CharField(read_only=True)
     verified = serializers.StringRelatedField(source='verified.first_name', read_only=True)
     comments = CommentSerializer(many=True, read_only=True)
     can_edit = serializers.BooleanField(read_only=True, label='Может ли данный пользователь редактировать мероприятие')
+    important_dates = ImportantDateSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Event
-        fields = '__all__'
+        fields = ('id', 'responsible', 'verified', 'comments', 'can_edit', 'important_dates')
 
 
 class DirectionSerializer(serializers.ModelSerializer):
