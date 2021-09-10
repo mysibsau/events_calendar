@@ -10,7 +10,8 @@ from rest_framework.viewsets import GenericViewSet
 from . import models, serializers, permissions
 from .services import verification
 from rest_framework.decorators import api_view
-from datetime import datetime
+from datetime import date, datetime
+from calendar import monthrange
 
 
 class EventViewSet(mixins.ListModelMixin, GenericViewSet):
@@ -30,9 +31,11 @@ class EventViewSet(mixins.ListModelMixin, GenericViewSet):
 
         если не передан year или month, то вернет мероприятия на текущий месяц
         """
+        start_date = date(year=year, month=month, day=1)
+        end_date = date(year=year, month=month, day=monthrange(year, month)[1])
         queryset = models.Event.objects.filter(
-            Q(start_date__year=year, start_date__month=month) |
-            Q(stop_date__year=year, stop_date__month=month)
+            start_date__lte=end_date,
+            stop_date__gte=start_date
         )
         if not request.user.is_staff:
             queryset = queryset.filter(verified__isnull=False)
