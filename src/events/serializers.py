@@ -4,15 +4,6 @@ from rest_framework import serializers, fields
 from . import models
 
 
-class EventSerializer(serializers.ModelSerializer):
-    # TODO: Эта дичь может возвращать none, нужно пофиксить
-    is_verified = serializers.BooleanField(read_only=True, source='verified')
-
-    class Meta:
-        model = models.Event
-        fields = ('id', 'name', 'start_date', 'stop_date', 'is_verified')
-
-
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.PrimaryKeyRelatedField(
         read_only=True,
@@ -35,6 +26,16 @@ class ImportantDateSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ImportantDate
         fields = ('name', 'date')
+
+
+class EventSerializer(serializers.ModelSerializer):
+    # TODO: Эта дичь может возвращать none, нужно пофиксить
+    is_verified = serializers.BooleanField(read_only=True, source='verified')
+    important_dates = ImportantDateSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = models.Event
+        fields = ('id', 'name', 'start_date', 'stop_date', 'is_verified', 'important_dates')
 
 
 class EventDetailSerializer(serializers.ModelSerializer):
