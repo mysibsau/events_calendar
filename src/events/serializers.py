@@ -47,7 +47,7 @@ class EventDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Event
-        fields = ('id', 'responsible', 'verified', 'comments', 'can_edit', 'important_dates')
+        fields = '__all__'
 
 
 class DirectionSerializer(serializers.ModelSerializer):
