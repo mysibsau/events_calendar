@@ -10,12 +10,18 @@ from .services import verification
 from .services.exporters import export_as_csv
 
 
+class ImportantDateInline(admin.TabularInline):
+    model = models.ImportantDate
+
+
 @admin.register(models.Event)
 class EventAdmin(admin.ModelAdmin):
     list_display = ('name', 'start_date', 'responsible', 'verified_date', 'event_actions', 'author')
     list_filter = (
         ('start_date', DateRangeFilter),
     )
+
+    inlines = [ImportantDateInline]
 
     actions = ['export_as_csv']
 
