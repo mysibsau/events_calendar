@@ -39,9 +39,7 @@ class EventViewSet(mixins.ListModelMixin, GenericViewSet):
             start_date__lte=end_date,
             stop_date__gte=start_date,
             important_dates__isnull=False,
-        )
-        if not request.user.is_staff:
-            queryset = queryset.filter(verified__isnull=False)
+        ).distinct().prefetch_related()
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
