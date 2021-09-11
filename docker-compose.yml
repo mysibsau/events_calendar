@@ -1,6 +1,6 @@
 version: "3.8"
 services:
-    calendar_database:
+    database:
         container_name: calendar_mysibsau_database
         image: postgres:13.4-alpine
         restart: always
@@ -8,7 +8,7 @@ services:
         volumes:
             - ./volumes/db/data:/var/lib/database/data
 
-    calendar_app:
+    app:
         build: .
         container_name: calendar_mysibsau_backend
         env_file: src/.env
@@ -18,7 +18,7 @@ services:
             - ./volumes/media:/media
             - ./volumes/static:/static
         depends_on:
-            - calendar_database
+            - database
         ports: 
             - "127.0.0.1:8000:8000"
         command: bash -c "
@@ -30,11 +30,3 @@ services:
                      --reload
                      --max-requests 100
                      --workers 4 core.wsgi:application"
-        labels:
-            - traefik.http.routers.calendar_mysibsau_backend.rule=Host(`api-calendar.mysibsau.ru`)
-            - traefik.http.routers.calendar_mysibsau_backend.entrypoints=web
-
-networks:
-    default:
-        name: traefik_mysibsau
-        external: false

@@ -31,6 +31,8 @@ class EventViewSet(mixins.ListModelMixin, GenericViewSet):
 
         если не передан year или month, то вернет мероприятия на текущий месяц
         """
+        year = int(year)
+        month = int(month)
         start_date = date(year=year, month=month, day=1)
         end_date = date(year=year, month=month, day=monthrange(year, month)[1])
         queryset = models.Event.objects.filter(
