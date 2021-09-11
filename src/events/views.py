@@ -37,7 +37,8 @@ class EventViewSet(mixins.ListModelMixin, GenericViewSet):
         end_date = date(year=year, month=month, day=monthrange(year, month)[1])
         queryset = models.Event.objects.filter(
             start_date__lte=end_date,
-            stop_date__gte=start_date
+            stop_date__gte=start_date,
+            important_dates__isnull=False,
         )
         if not request.user.is_staff:
             queryset = queryset.filter(verified__isnull=False)
