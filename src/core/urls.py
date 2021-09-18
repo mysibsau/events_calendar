@@ -6,9 +6,7 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
-from user.views import obtain_auth_token
-from user.forms import AdminAuthenticationForm
-from .api import router, urls
+from api.urls import urls as api_urls
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -21,12 +19,10 @@ schema_view = get_schema_view(
 )
 
 admin.site.site_header = 'Администрирование календаря мероприятий'
-admin.site.login_form = AdminAuthenticationForm
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('v1/auth', obtain_auth_token),
-    path('v1/', include(urls)),
+    path('v1/', include(api_urls)),
     path('docs/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
 

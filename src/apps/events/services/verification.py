@@ -1,7 +1,7 @@
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.utils import timezone
 
-from events.models import Event
+from apps.events.models import Event
 
 
 def verify_event(event_id: int, user: AbstractBaseUser):

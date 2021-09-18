@@ -1,8 +1,8 @@
 from django.urls import path
 from rest_framework.routers import SimpleRouter
 
-from events import views as event_views
-from user.views import ProfileView, UserViewSet
+from api.events import views as event_views
+from api.user.views import ProfileView, UserViewSet, obtain_auth_token
 
 router = SimpleRouter()
 router.register('events', event_views.EventViewSet)
@@ -20,4 +20,5 @@ router.register('reference/organizations', event_views.OrganizationViewSet)
 urls = [
     path('user/', ProfileView.as_view()),
     path('event/vereficate/<int:event_id>', event_views.VerifyEvent.as_view()),
+    path('auth', obtain_auth_token),
 ] + router.urls

@@ -1,4 +1,3 @@
-from django.db.models import Q
 from django.utils import timezone
 from rest_framework import mixins, status
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -7,10 +6,10 @@ from rest_framework.views import APIView
 from rest_framework.decorators import action
 from rest_framework.viewsets import GenericViewSet
 
-from . import models, serializers, permissions
-from .services import verification
-from rest_framework.decorators import api_view
-from datetime import date, datetime
+from apps.events import models
+from api.events import serializers, permissions
+from apps.events.services import verification
+from datetime import date
 from calendar import monthrange
 
 

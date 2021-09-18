@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.authtoken.serializers import AuthTokenSerializer as AuthTokenSerializerDefault
-from .models import User
+from apps.user.models import User
 
 
 class AuthTokenSerializer(AuthTokenSerializerDefault):

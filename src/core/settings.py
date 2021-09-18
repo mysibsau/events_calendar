@@ -41,8 +41,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'rangefilter',
 
-    'events',
-    'user'
+    'apps.events',
+    'apps.user'
 ]
 
 AUTHENTICATION_BACKENDS = (

@@ -1,7 +1,6 @@
-from django.db.models import fields
-from rest_framework import serializers, fields
+from rest_framework import serializers
 
-from . import models
+from apps.events import models
 
 
 class CommentSerializer(serializers.ModelSerializer):

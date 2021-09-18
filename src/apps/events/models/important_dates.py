@@ -1,5 +1,5 @@
 from django.db import models
-from events.models.event import Event
+from apps.events.models.event import Event
 
 
 class ImportantDate(models.Model):

@@ -1,0 +1,11 @@
+[flake8]
+ignore = WPS400, WPS305
+max-line-length = 120
+format = default
+per-file-ignores =
+    test_*: DAR201, DAR101, S101
+exclude =
+      static,
+      migrations,
+      .git,
+      __pycache__

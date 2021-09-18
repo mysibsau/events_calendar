@@ -4,8 +4,8 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.html import format_html
 
-from . import models
-from .services import confirm
+from apps.user import models
+from apps.user.services import confirm
 
 
 @admin.register(models.User)

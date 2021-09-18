@@ -1,4 +1,4 @@
-from user.models import User
+from apps.user.models import User
 
 
 def __user_builder(user_id: int, **kwargs) -> bool:

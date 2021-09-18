@@ -4,7 +4,7 @@ from django.db.models import QuerySet
 from django.http import HttpResponse
 from django.utils import timezone
 
-from events.models import Event
+from apps.events.models import Event
 
 
 def export_as_csv(queryset: QuerySet[Event]) -> HttpResponse:

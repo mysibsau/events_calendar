@@ -9,8 +9,8 @@ from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import filters
 
-from .serializer import AuthTokenSerializer, ProfileSerializer, UserSerializer
-from . import models, services
+from api.user.serializer import AuthTokenSerializer, ProfileSerializer, UserSerializer
+from apps.user import models, services
 
 
 class ObtainAuthToken(StandartObtainAuthToken):
