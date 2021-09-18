@@ -43,7 +43,7 @@ class EventDetailSerializer(serializers.ModelSerializer):
     verified = serializers.StringRelatedField(source='verified.first_name', read_only=True)
     comments = CommentSerializer(many=True, read_only=True)
     can_edit = serializers.BooleanField(read_only=True, label='Может ли данный пользователь редактировать мероприятие')
-    important_dates = ImportantDateSerializer(many=True, read_only=True)
+    important_dates = ImportantDateSerializer(many=True)
 
     class Meta:
         model = models.Event
