@@ -46,7 +46,7 @@ INSTALLED_APPS = [
 ]
 
 AUTHENTICATION_BACKENDS = (
-    'user.backends.OdooBackend',
+    'apps.user.backends.OdooBackend',
 )
 
 ODOO_SERVER_URL = env.str('ODOO_SERVER_URL')
