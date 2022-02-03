@@ -19,14 +19,21 @@ services:
             - ./volumes/static:/static
         depends_on:
             - database
-        ports: 
-            - "127.0.0.1:8000:8000"
+        ports:
+            - 8000:80
         command: bash -c "
             python manage.py migrate &&
             python manage.py collectstatic --noinput &&
-            gunicorn --bind 0.0.0.0:8000
+            gunicorn --bind 0.0.0.0:80
                      --timeout 600
                      --log-level debug
                      --reload
                      --max-requests 100
                      --workers 4 core.wsgi:application"
+        networks:
+            - event-calendar
+            - default
+
+networks:
+    event-calendar:
+        name: event-calendar
