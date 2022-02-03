@@ -45,6 +45,13 @@ class EventDetailSerializer(serializers.ModelSerializer):
     important_dates = ImportantDateSerializer(many=True, required=False)
     author = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
+    def create(self, validated_data: dict):
+        important_dates = validated_data.pop('important_dates', None)
+        event = models.Event.objects.create(**validated_data)
+        for important in important_dates:
+            models.ImportantDate.objects.create(event=event, **important)
+        return event
+
     class Meta:
         model = models.Event
         fields = '__all__'
