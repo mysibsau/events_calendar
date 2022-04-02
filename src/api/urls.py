@@ -20,5 +20,5 @@ router.register('reference/organizations', event_views.OrganizationViewSet)
 urls = [
     path('user/', ProfileView.as_view()),
     path('event/vereficate/<int:event_id>', event_views.VerifyEvent.as_view()),
-    path('auth', obtain_auth_token),
+    path('auth/', obtain_auth_token),
 ] + router.urls
