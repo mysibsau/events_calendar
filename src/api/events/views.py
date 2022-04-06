@@ -1,4 +1,5 @@
 from django.utils import timezone
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
@@ -20,6 +21,8 @@ class EventViewSet(mixins.ListModelMixin, GenericViewSet):
         'my': [IsAuthenticated()],
         'unverified': [IsAdminUser()],
     }
+    filter_backends = [DjangoFilterBackend]
+    filter_fields = ['name', 'place']
 
     def get_permissions(self):
         return self.permissions.get(self.action, super().get_permissions())
@@ -83,6 +86,8 @@ class EventDetailView(mixins.CreateModelMixin,
 class DirectionViewSet(mixins.ListModelMixin, GenericViewSet):
     serializer_class = serializers.DirectionSerializer
     queryset = models.Direction.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filter_fields = ['name']
 
 
 class LevelViewSet(mixins.ListModelMixin, GenericViewSet):
