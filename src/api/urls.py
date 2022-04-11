@@ -4,6 +4,7 @@ from rest_framework.routers import SimpleRouter
 from api.events import views as event_views
 from api.user.views import ProfileView, UserViewSet, obtain_auth_token
 
+
 router = SimpleRouter()
 router.register('events', event_views.EventViewSet)
 router.register('users', UserViewSet)

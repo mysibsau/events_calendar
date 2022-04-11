@@ -1,3 +1,4 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken as StandartObtainAuthToken
 from rest_framework.generics import GenericAPIView
@@ -52,7 +53,8 @@ class UserViewSet(RetrieveModelMixin, ListModelMixin, GenericViewSet):
     permission_classes = [IsAdminUser]
     queryset = models.User.objects.all()
     pagination_class = StandardResultsSetPagination
-    filter_backends = (filters.SearchFilter,)
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    filter_fields = ['username', 'email']
     search_fields = ['username', 'email']
 
     @action(detail=True)
