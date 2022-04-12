@@ -21,8 +21,8 @@ class EventViewSet(mixins.ListModelMixin, GenericViewSet):
         'my': [IsAuthenticated()],
         'unverified': [IsAdminUser()],
     }
-    filter_backends = [DjangoFilterBackend]
-    filter_fields = ['name', 'place']
+    filter_backends = (DjangoFilterBackend, )
+    filter_fields = ('id', 'name')
 
     def get_permissions(self):
         return self.permissions.get(self.action, super().get_permissions())
@@ -87,27 +87,35 @@ class DirectionViewSet(mixins.ListModelMixin, GenericViewSet):
     serializer_class = serializers.DirectionSerializer
     queryset = models.Direction.objects.all()
     filter_backends = [DjangoFilterBackend]
-    filter_fields = ['name']
+    filter_fields = ['id', 'name']
 
 
 class LevelViewSet(mixins.ListModelMixin, GenericViewSet):
     serializer_class = serializers.LevelSerializer
     queryset = models.Level.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filter_fields = ['id', 'name']
 
 
 class RoleViewSet(mixins.ListModelMixin, GenericViewSet):
     serializer_class = serializers.RoleSerializer
     queryset = models.Role.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filter_fields = ['id', 'name']
 
 
 class FormatViewSet(mixins.ListModelMixin, GenericViewSet):
     serializer_class = serializers.FormatSerializer
     queryset = models.Format.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filter_fields = ['id', 'name']
 
 
 class OrganizationViewSet(mixins.ListModelMixin, GenericViewSet):
     serializer_class = serializers.OrganizationSerializer
     queryset = models.Organization.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filter_fields = ['id', 'name']
 
 
 class VerifyEvent(APIView):
