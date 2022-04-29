@@ -5,8 +5,16 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
 
+class UserRole(models.TextChoices):
+    default = 'default', 'Обычный пользователь'
+    author = 'author', 'Автор'
+    moderator = 'moder', 'Модератор'
+    administrator = 'admin', 'Администратор'
+
+
 class User(AbstractUser):
     confirmed = models.BooleanField('Подтвержден', default=False)
+    role = models.CharField('Роль', max_length=8, choices=UserRole.choices, default=UserRole.default)
 
     def __str__(self):
         return self.get_full_name()
