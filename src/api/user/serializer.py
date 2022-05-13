@@ -1,43 +1,17 @@
+from apps.user.models import User, UserRole
 from rest_framework import serializers
 from rest_framework.authtoken.serializers import AuthTokenSerializer as AuthTokenSerializerDefault
-from apps.user.models import User
 
 
 class AuthTokenSerializer(AuthTokenSerializerDefault):
-    name = serializers.CharField(
-        label="Имя отчество пользователя",
-        read_only=True
-    )
-    confirmed = serializers.BooleanField(
-        label="Подтвержденный ли аккаунт",
-        read_only=True
-    )
-    is_staff = serializers.BooleanField(
-        label="является ли сотрудником",
-        read_only=True,
-    )
-    id = serializers.IntegerField(
-        label="Id пользователя",
-        read_only=True,
-    )
-
-
-class ProfileSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(
-        label='Имя отчество пользователя',
-        source='first_name',
-        read_only=True
-    )
-
-    class Meta:
-        model = User
-        fields = ('name', 'confirmed', 'is_staff')
+    password = None
+    username = None
+    id = serializers.IntegerField(label="ID", read_only=True)
+    name = serializers.CharField(label="Имя отчество пользователя", read_only=True)
+    role = serializers.ChoiceField(label="Роль пользователя", read_only=True, choices=UserRole.choices)
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = (
-            'id', 'username', 'first_name', 'last_name', 'email',
-            'is_staff', 'is_active', 'confirmed'
-        )
+        fields = ("id", "username", "first_name", "last_name", "email", "role")
