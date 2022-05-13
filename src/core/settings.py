@@ -4,6 +4,7 @@ from pathlib import Path
 import django_heroku
 import environ
 
+
 env = environ.Env(
     DEBUG=(bool, False)
 )
@@ -41,8 +42,9 @@ INSTALLED_APPS = [
     'corsheaders',
     'rangefilter',
 
+    'apps.user',
     'apps.events',
-    'apps.user'
+
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -122,6 +124,9 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
 }
 
 LANGUAGE_CODE = 'ru-ru'
