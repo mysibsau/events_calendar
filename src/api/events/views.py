@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.decorators import action
 from rest_framework.viewsets import GenericViewSet
 
+from apps.user.models import UserRole
 from apps.events import models
 from api.events import serializers, permissions
 from apps.events.services import verification
@@ -26,6 +27,13 @@ class EventViewSet(mixins.ListModelMixin, GenericViewSet):
 
     def get_permissions(self):
         return self.permissions.get(self.action, super().get_permissions())
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if not self.request.user.is_authenticated:
+            return models.Event.objects.none()
+        if self.request.user.role == UserRole.author:
+            return queryset.filter(author=self.request.user)
 
     def list(self, request, year=timezone.now().year, month=timezone.now().month, *args, **kwargs):
         """

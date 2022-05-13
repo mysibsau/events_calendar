@@ -34,7 +34,7 @@ class EventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Event
-        fields = ('id', 'name', 'start_date', 'stop_date', 'is_verified', 'important_dates')
+        fields = '__all__'
 
 
 class EventDetailSerializer(serializers.ModelSerializer):

@@ -7,7 +7,6 @@ from rest_framework.authtoken.models import Token
 
 
 class UserRole(models.TextChoices):
-    default = "default", "Обычный пользователь"
     author = "author", "Автор"
     moderator = "moder", "Модератор"
     administrator = "admin", "Администратор"
@@ -16,7 +15,7 @@ class UserRole(models.TextChoices):
 class User(AbstractUser):
     confirmed = models.BooleanField("Подтвержден", default=False)
     role = models.CharField(
-        "Роль", max_length=enum_max_length(UserRole), choices=UserRole.choices, default=UserRole.default
+        "Роль", max_length=enum_max_length(UserRole), choices=UserRole.choices, default=UserRole.author
     )
 
     def __str__(self):
