@@ -7,6 +7,7 @@ from odoo_auth.models import OdooUser
 class OdooBackend(backends.OdooBackend):
     def authenticate(self, request, username=None, password=None):
         user = super().authenticate(request, username, password)
+        print(username, password)
         if user and not user.first_name:
             odoo_user = OdooUser.objects.filter(user=user).first()
             if not odoo_user:
