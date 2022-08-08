@@ -17,6 +17,9 @@ class ObtainAuthToken(StandartObtainAuthToken):
     serializer_class = AuthTokenSerializer
 
     def post(self, request, *args, **kwargs):
+        print('-'*30, flush=True)
+        print(request.data, flush=True)
+        print('-'*30, flush=True)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]
