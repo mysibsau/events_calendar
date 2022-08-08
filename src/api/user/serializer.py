@@ -4,8 +4,6 @@ from rest_framework.authtoken.serializers import AuthTokenSerializer as AuthToke
 
 
 class AuthTokenSerializer(AuthTokenSerializerDefault):
-    password = None
-    username = None
     id = serializers.IntegerField(label="ID", read_only=True)
     name = serializers.CharField(label="Имя отчество пользователя", read_only=True)
     role = serializers.ChoiceField(label="Роль пользователя", read_only=True, choices=UserRole.choices)
