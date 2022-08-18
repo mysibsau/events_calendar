@@ -6,17 +6,16 @@ from .format import Format
 from .level import Level
 from .organization import Organization
 from .role import Role
+from apps.helpers.models import enum_max_length
 
 User = settings.AUTH_USER_MODEL
 
 
-# TODO: Додавить поле со статусом
-"""
-Отклонено
-В обработке
-В ожидании отчета
-Верефицированно
-"""
+class EventStatus(models.TextChoices):
+    rejected = "rejected ", "Отклоненно"
+    in_process = "in_process", "В обработке"
+    wait_for_report = "wait_for_report", "В ожидании отчета"
+    verified = "verified", "Верефицированно"
 
 
 class Event(models.Model):
@@ -28,6 +27,11 @@ class Event(models.Model):
         blank=True,
     )
     name = models.CharField("Название мероприятия", max_length=512)
+    event_status = models.CharField(
+        "Статус Мероприятия",
+        max_length=enum_max_length(EventStatus),
+        choices=EventStatus.choices,
+        default=EventStatus.in_process)
     free_plan = models.BooleanField("Включить в сводный план", default=False)
     level = models.ForeignKey(Level, models.SET_NULL, verbose_name="Уровень мероприятия", null=True, blank=True)
     role = models.ForeignKey(Role, models.SET_NULL, verbose_name="Роль СибГУ", null=True, blank=True)
