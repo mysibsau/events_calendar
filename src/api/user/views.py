@@ -1,7 +1,5 @@
-from api.user.serializer import AuthTokenSerializer, UserSerializer
-from apps.user.models import User
-from apps.user.services import confirm
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import filters
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken as StandartObtainAuthToken
@@ -11,6 +9,9 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
+
+from api.user.serializer import AuthTokenSerializer, CreateInviteSerializer, InviteSerializer, UserSerializer
+from apps.user.models import Invite, User, UserRole
 
 
 class ObtainAuthToken(StandartObtainAuthToken):
@@ -48,12 +49,14 @@ class UserViewSet(RetrieveModelMixin, ListModelMixin, GenericViewSet):
     filter_fields = ["username", "email"]
     search_fields = ["username", "email"]
 
-    @action(detail=True)
-    def confirmed(self, request, pk):
-        confirm.confirm_user(pk)
-        return super().retrieve(request)
-
-    @action(detail=True)
-    def ban(self, request, pk):
-        confirm.ban_user(pk)
-        return super().retrieve(request)
+    @swagger_auto_schema(request_body=CreateInviteSerializer, responses={200: InviteSerializer})
+    @action(detail=False, methods=["post"])
+    def invite(self, request):
+        serializer = CreateInviteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = request.user
+        role = serializer.validated_data["role"]
+        if user.role < UserRole.moderator or role >= user.role:
+            return Response({"detail": "Недостаточно прав"}, status=403)
+        invite = Invite.objects.create(author=user, role=role)
+        return Response({"code": invite.id})

@@ -49,3 +49,8 @@ class UserAdmin(admin.ModelAdmin):
 
     user_actions.short_description = 'Действия'
     user_actions.allow_tags = True
+
+
+@admin.register(models.Invite)
+class InviteAdmin(admin.ModelAdmin):
+    list_display = ("pk", "author", "user", "role")
