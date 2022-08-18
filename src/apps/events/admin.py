@@ -16,7 +16,7 @@ class ImportantDateInline(admin.TabularInline):
 
 @admin.register(models.Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('name', 'start_date', 'responsible', 'verified_date', 'event_actions', 'author')
+    list_display = ('name', 'start_date', 'responsible', 'verified_date', 'event_actions', 'author', 'status')
     list_filter = (
         ('start_date', DateRangeFilter),
     )

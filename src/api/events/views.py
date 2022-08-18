@@ -1,3 +1,5 @@
+from rest_framework.decorators import action
+
 from api.events import permissions, serializers
 from apps.events import models
 from apps.events.services import verification
@@ -17,17 +19,26 @@ class EventViewSet(ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ("id", "name")
 
+    # def get_queryset(self):
+    #     queryset = super().get_queryset()
+    #     if not self.request.user.is_authenticated:
+    #         return queryset.filter(
+    #             verified=True,
+    #             coverage_participants_fact__isnull=True,  # TODO: заменить на статус мероприятия
+    #             important_dates__isnull=False,
+    #         )
+    #     if self.request.user.role == UserRole.author:
+    #         return queryset.filter(author=self.request.user)
+    #     return queryset
+
     def get_queryset(self):
-        queryset = super().get_queryset()
-        if not self.request.user.is_authenticated:
-            return queryset.filter(
-                verified=True,
-                coverage_participants_fact__isnull=True,  # TODO: заменить на статус мероприятия
-                important_dates__isnull=False,
-            )
-        if self.request.user.role == UserRole.author:
-            return queryset.filter(author=self.request.user)
-        return queryset
+        if self.action == "my":
+            return self.queryset.filter(author=self.request.user)
+        return self.queryset
+
+    @action(detail=False)
+    def my(self, request):
+        return super().list(request)
 
 
 class DirectionViewSet(mixins.ListModelMixin, GenericViewSet):

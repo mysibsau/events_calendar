@@ -10,12 +10,19 @@ from apps.helpers.models import enum_max_length
 
 User = settings.AUTH_USER_MODEL
 
+"""Заменить rejected и тд на числа"""
+"""Выпилить кнопку верефицировать"""
+"""Выпилить(обновить) коммент"""
+
 
 class EventStatus(models.TextChoices):
-    rejected = "rejected ", "Отклоненно"
-    in_process = "in_process", "В обработке"
-    wait_for_report = "wait_for_report", "В ожидании отчета"
-    verified = "verified", "Верефицированно"
+    rejected = 0, "Отклоненно"
+    in_process = 1, "В обработке"
+    wait_for_report = 2, "В ожидании отчета"
+    verified = 3, "Верефицированно"
+
+
+"""Добавить зеленую или желтую галку"""
 
 
 class Event(models.Model):
@@ -26,10 +33,11 @@ class Event(models.Model):
         null=True,
         blank=True,
     )
+
     name = models.CharField("Название мероприятия", max_length=512)
-    event_status = models.CharField(
+    status = models.CharField(
         "Статус Мероприятия",
-        max_length=enum_max_length(EventStatus),
+        max_length=1,
         choices=EventStatus.choices,
         default=EventStatus.in_process)
     free_plan = models.BooleanField("Включить в сводный план", default=False)
