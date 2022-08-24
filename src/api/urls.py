@@ -1,7 +1,8 @@
-from api.events import views as event_views
-from api.user.views import UserViewSet, obtain_auth_token
 from django.urls import path
 from rest_framework.routers import SimpleRouter
+
+from api.events import views as event_views
+from api.user.views import UserViewSet, obtain_auth_token
 
 router = SimpleRouter()
 router.register("events", event_views.EventViewSet)
@@ -16,6 +17,5 @@ router.register("reference/organizations", event_views.OrganizationViewSet)
 
 urls = [
     path("event/vereficate/<int:event_id>", event_views.VerifyEvent.as_view()),
-    path("event/generate_report/<int:event_id>", event_views.GenerateReport.as_view()),
     path("auth/", obtain_auth_token),
 ] + router.urls

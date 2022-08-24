@@ -1,16 +1,15 @@
-from rest_framework.decorators import action
-
-from api.events import permissions, serializers
-from apps.events import models
-from apps.events.services import verification
-from apps.user.models import UserRole
-from apps.helpers import report_exporter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins, status
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
+
+from api.events import permissions, serializers
+from apps.events import models
+from apps.events.services import verification
+from apps.helpers import report_exporter
 
 
 class EventViewSet(ModelViewSet):
@@ -40,6 +39,13 @@ class EventViewSet(ModelViewSet):
     @action(detail=False)
     def my(self, request):
         return super().list(request)
+
+    @action(detail=True, methods=["get"])
+    def generate_report(self, request, pk=None):
+        event = self.get_object()
+        report_exporter.report_exporter(event)
+
+        return Response(status=status.HTTP_200_OK)
 
 
 class DirectionViewSet(mixins.ListModelMixin, GenericViewSet):
@@ -87,14 +93,6 @@ class VerifyEvent(APIView):
 
     def delete(self, request, event_id, *args, **kwargs):
         verification.cancel_event_verification(event_id)
-
-        return Response(status=status.HTTP_200_OK)
-
-
-class GenerateReport(APIView):
-
-    def generate_report(self, event_id, *args, **kwargs):
-        report_exporter.report_exporter(event_id)
 
         return Response(status=status.HTTP_200_OK)
 
