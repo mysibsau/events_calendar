@@ -1,12 +1,13 @@
 from django.conf import settings
 from django.db import models
 
+from apps.helpers.models import enum_max_length
+
 from .direction import Direction
 from .format import Format
 from .level import Level
 from .organization import Organization
 from .role import Role
-from apps.helpers.models import enum_max_length
 
 User = settings.AUTH_USER_MODEL
 
@@ -33,13 +34,11 @@ class Event(models.Model):
         null=True,
         blank=True,
     )
-
+    description = models.TextField(verbose_name="Описание", default="")
     name = models.CharField("Название мероприятия", max_length=512)
     status = models.CharField(
-        "Статус Мероприятия",
-        max_length=1,
-        choices=EventStatus.choices,
-        default=EventStatus.in_process)
+        "Статус Мероприятия", max_length=1, choices=EventStatus.choices, default=EventStatus.in_process
+    )
     free_plan = models.BooleanField("Включить в сводный план", default=False)
     level = models.ForeignKey(Level, models.SET_NULL, verbose_name="Уровень мероприятия", null=True, blank=True)
     role = models.ForeignKey(Role, models.SET_NULL, verbose_name="Роль СибГУ", null=True, blank=True)

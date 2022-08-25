@@ -15,6 +15,11 @@ class UserRole(models.IntegerChoices):
     super_admin = 3, "Супер администратор"
 
 
+class PersonalStatus(models.IntegerChoices):
+    student = 0, "Студент"
+    staff = 1, "Сотрудник"
+
+
 class Invite(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     author = models.ForeignKey("User", on_delete=models.CASCADE, related_name="invites")
@@ -22,11 +27,15 @@ class Invite(models.Model):
         "User", on_delete=models.CASCADE, related_name="invited_by", null=True, blank=True, default=None
     )
     role = models.IntegerField("Роль", choices=UserRole.choices)
+    status = models.IntegerField("Статус", choices=PersonalStatus.choices, default=PersonalStatus.student)
+    position = models.TextField("Должность", blank=True, default="", help_text="Должность или группа")
 
 
 class User(AbstractUser):
-    confirmed = models.BooleanField("Подтвержден", default=False)
     role = models.IntegerField("Роль", choices=UserRole.choices, default=UserRole.author)
+    status = models.IntegerField("Статус", choices=PersonalStatus.choices, default=PersonalStatus.student)
+    position = models.TextField("Должность", blank=True, default="", help_text="Должность или группа")
+    contact_info = models.TextField("Контактная информация", blank=True, default="", help_text="Контактная информация")
 
     @staticmethod
     def get_invites(user: "User") -> List["User"]:

@@ -8,6 +8,7 @@ from rangefilter.filters import DateRangeFilter
 from . import models
 from .services import verification
 from .services.exporters import export_as_csv
+from apps.helpers.report_exporter import report_exporter
 
 
 class ImportantDateInline(admin.TabularInline):
@@ -23,7 +24,7 @@ class EventAdmin(admin.ModelAdmin):
 
     inlines = [ImportantDateInline]
 
-    actions = ['export_as_csv']
+    actions = ['export_as_csv', 'generate_report']
 
     fields = (
         ('name', 'direction'),
@@ -80,6 +81,10 @@ class EventAdmin(admin.ModelAdmin):
     def export_as_csv(self, request, queryset):
         return export_as_csv(queryset)
 
+    def generate_report(self, request, event_id):
+        return report_exporter(event_id)
+
+    generate_report.short_description = "Создать отчет"
     export_as_csv.short_description = 'Экспортировать в csv'
 
     def save_model(self, request, obj, *args) -> None:

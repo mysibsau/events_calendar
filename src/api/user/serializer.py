@@ -33,6 +33,8 @@ class AuthTokenSerializer(AuthTokenSerializerDefault):
                 invite.user = attrs.get("user")
                 invite.save()
                 attrs.get("user").role = invite.role
+                attrs.get("user").status = invite.status
+                attrs.get("user").position = invite.position
                 attrs.get("user").save()
             else:
                 raise serializers.ValidationError("Неверный код подтверждения")
@@ -52,3 +54,9 @@ class CreateInviteSerializer(serializers.Serializer):
 
 class InviteSerializer(serializers.Serializer):
     code = serializers.CharField(label="Код приглашения", read_only=True)
+
+
+class EditUser(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("contact_info",)
