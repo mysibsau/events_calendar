@@ -50,12 +50,12 @@ class UserViewSet(ReadOnlyModelViewSet, UpdateModelMixin):
     search_fields = ["username", "email"]
 
     def get_serializer_class(self):
-        if self.action == "update":
+        if self.action in ("update", "partial_update"):
             return EditUser
         return self.serializer_class
 
     def get_permissions(self):
-        if self.action == "update":
+        if self.action in ("update", "partial_update"):
             return []
         return super().get_permissions()
 
