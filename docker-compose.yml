@@ -1,41 +1,33 @@
 version: "3.8"
+
 services:
-    database:
-        container_name: calendar_mysibsau_database
-        image: postgres:13.4-alpine
-        restart: always
-        env_file: src/.env
-        volumes:
-            - ./volumes/db/data:/var/lib/database/data
-        ports:
-            - "7777:5432"
+  database:
+    container_name: calendar_mysibsau_database
+    image: postgres:13.4-alpine
+    restart: always
+    env_file: src/.env
+    volumes:
+        - ./volumes/db/data:/var/lib/postgresql/data
 
-    app:
-        build: .
-        container_name: calendar_mysibsau_backend
-        env_file: src/.env
-        restart: always
-        volumes:
-            - ./src:/app
-            - ./volumes/media:/media
-            - ./volumes/static:/static
-        depends_on:
-            - database
-        ports:
-            - 8000:80
-        command: bash -c "
-            python manage.py migrate &&
-            python manage.py collectstatic --noinput &&
-            gunicorn --bind 0.0.0.0:80
-                     --timeout 600
-                     --log-level debug
-                     --reload
-                     --max-requests 100
-                     --workers 4 core.wsgi:application"
-        networks:
-            - event-calendar
-            - default
-
-networks:
-    event-calendar:
-        name: event-calendar
+  app:
+    build: .
+    container_name: calendar_mysibsau_backend
+    env_file: src/.env
+    restart: always
+    volumes:
+      - ./src:/app
+      - ./volumes/media:/media
+      - ./volumes/static:/static
+    depends_on:
+      - database
+    ports:
+      - 80:80
+    command: bash -c "
+      python manage.py migrate &&
+      python manage.py collectstatic --noinput &&
+      gunicorn --bind 0.0.0.0:80
+        --timeout 600
+        --log-level debug
+        --reload
+        --max-requests 100
+        --workers 4 core.wsgi:application"

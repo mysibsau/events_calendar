@@ -4,13 +4,13 @@ from rest_framework import filters
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken as StandartObtainAuthToken
 from rest_framework.decorators import action
-from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
+from rest_framework.mixins import UpdateModelMixin
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet
+from rest_framework.viewsets import ReadOnlyModelViewSet
 
-from api.user.serializer import AuthTokenSerializer, CreateInviteSerializer, InviteSerializer, UserSerializer
+from api.user.serializer import AuthTokenSerializer, CreateInviteSerializer, EditUser, InviteSerializer, UserSerializer
 from apps.user.models import Invite, User, UserRole
 
 
@@ -40,7 +40,7 @@ class StandardResultsSetPagination(PageNumberPagination):
     page_size_query_param = "page_size"
 
 
-class UserViewSet(RetrieveModelMixin, ListModelMixin, GenericViewSet):
+class UserViewSet(ReadOnlyModelViewSet, UpdateModelMixin):
     serializer_class = UserSerializer
     permission_classes = [IsAdminUser]
     queryset = User.objects.all()
@@ -48,6 +48,21 @@ class UserViewSet(RetrieveModelMixin, ListModelMixin, GenericViewSet):
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     filter_fields = ["username", "email"]
     search_fields = ["username", "email"]
+
+    def get_serializer_class(self):
+        if self.action in ("update", "partial_update"):
+            return EditUser
+        return self.serializer_class
+
+    def get_permissions(self):
+        if self.action in ("update", "partial_update"):
+            return []
+        return super().get_permissions()
+
+    def update(self, request, *args, **kwargs):
+        if request.user != self.get_object():
+            return Response({"error": "вы не можете редактировать других пользователей"}, status=403)
+        return super().update(request, *args, **kwargs)
 
     @swagger_auto_schema(request_body=CreateInviteSerializer, responses={200: InviteSerializer})
     @action(detail=False, methods=["post"])
