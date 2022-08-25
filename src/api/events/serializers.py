@@ -31,7 +31,7 @@ class EventSerializer(serializers.ModelSerializer):
     author = serializers.PrimaryKeyRelatedField(read_only=True, label="Id автора")
 
     def create(self, validated_data):
-        user = self.required.user
+        user = self.context["request"].user
         if not user or not user.is_authenticated:
             raise serializers.ValidationError("Вы не авторизованы")
         validated_data["author"] = user.id
