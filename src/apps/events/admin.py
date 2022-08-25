@@ -30,7 +30,6 @@ class EventAdmin(admin.ModelAdmin):
         "free_plan",
         ("level", "role", "format"),
         ("educational_work_in_opop", "hours_count"),
-        "educational_work_outside_opop",
         ("start_date", "stop_date"),
         "place",
         ("coverage_participants_plan", "number_organizers"),
