@@ -10,6 +10,7 @@ from .services import verification
 from .services.exporters import export_as_csv
 from apps.helpers.report_exporter import report_exporter
 
+
 class ImportantDateInline(admin.TabularInline):
     model = models.ImportantDate
 
@@ -81,9 +82,9 @@ class EventAdmin(admin.ModelAdmin):
         return export_as_csv(queryset)
 
     def generate_report(self, request, event_id):
-        report_exporter(event_id)
-        return HttpResponseRedirect("../../")
+        return report_exporter(event_id)
 
+    generate_report.short_description = "Создать отчет"
     export_as_csv.short_description = 'Экспортировать в csv'
 
     def save_model(self, request, obj, *args) -> None:

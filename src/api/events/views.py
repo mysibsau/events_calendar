@@ -9,7 +9,7 @@ from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from api.events import permissions, serializers
 from apps.events import models
 from apps.events.services import verification
-from apps.helpers import report_exporter
+from apps.helpers.report_exporter import report_exporter
 
 
 class EventViewSet(ModelViewSet):
@@ -43,9 +43,7 @@ class EventViewSet(ModelViewSet):
     @action(detail=True, methods=["get"])
     def generate_report(self, request, pk=None):
         event = self.get_object()
-        report_exporter.report_exporter(event)
-
-        return Response(status=status.HTTP_200_OK)
+        return report_exporter(event.id)
 
 
 class DirectionViewSet(mixins.ListModelMixin, GenericViewSet):
