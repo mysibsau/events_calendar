@@ -45,13 +45,11 @@ class Event(models.Model):
     format = models.ForeignKey(Format, models.SET_NULL, verbose_name="Формат мероприятия", null=True, blank=True)
     educational_work_in_opop = models.BooleanField("Воспитательная работа в рамках ОПОП", default=False)
     hours_count = models.PositiveSmallIntegerField("Количество часов", blank=True, null=True)
-    educational_work_outside_opop = models.BooleanField("Воспитательная работа за пределами ОПОП", default=True)
     start_date = models.DateField("Дата начала")
     stop_date = models.DateField("Дата окончания", blank=True)
     place = models.CharField("Место проведения", max_length=256)
     coverage_participants_plan = models.PositiveSmallIntegerField("Охват участников (план)")
     number_organizers = models.PositiveSmallIntegerField("Из них организаторов", blank=True, null=True)
-    responsible = models.CharField("Ответсвенное лицо", max_length=512)
     position = models.CharField("Должность", max_length=512, blank=True)
     author = models.ForeignKey(User, models.SET_NULL, "my_events", verbose_name="Автор", null=True)
     organization = models.ForeignKey(
