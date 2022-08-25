@@ -75,3 +75,10 @@ class UserViewSet(ReadOnlyModelViewSet, UpdateModelMixin):
             return Response({"detail": "Недостаточно прав"}, status=403)
         invite = Invite.objects.create(author=user, role=role)
         return Response({"code": invite.id})
+
+    @action(detail=False, methods=["get"])
+    def my_invites(self, request):
+        user = request.user
+        invites = user.get_my_invites(UserRole.author)
+        serializer = UserSerializer(invites, many=True)
+        return Response(serializer.data)
