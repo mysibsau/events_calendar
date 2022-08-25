@@ -17,55 +17,53 @@ class ImportantDateInline(admin.TabularInline):
 
 @admin.register(models.Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('name', 'start_date', 'responsible', 'verified_date', 'event_actions', 'author', 'status')
-    list_filter = (
-        ('start_date', DateRangeFilter),
-    )
+    list_display = ("name", "start_date", "responsible", "verified_date", "event_actions", "author", "status")
+    list_filter = (("start_date", DateRangeFilter),)
 
     inlines = [ImportantDateInline]
 
-    actions = ['export_as_csv', 'generate_report']
+    actions = ["export_as_csv", "generate_report"]
 
     fields = (
-        ('name', 'direction'),
-        'free_plan',
-        ('level', 'role', 'format'),
-        ('educational_work_in_opop', 'hours_count'),
-        'educational_work_outside_opop',
-        ('start_date', 'stop_date'),
-        'place',
-        ('coverage_participants_plan', 'number_organizers'),
-        ('responsible', 'position', 'organization'),
-        'coverage_participants_fact',
-        'links'
+        ("name", "direction"),
+        "free_plan",
+        ("level", "role", "format"),
+        ("educational_work_in_opop", "hours_count"),
+        "educational_work_outside_opop",
+        ("start_date", "stop_date"),
+        "place",
+        ("coverage_participants_plan", "number_organizers"),
+        ("responsible", "position", "organization"),
+        "coverage_participants_fact",
+        "links",
+        "description",
     )
 
     def event_actions(self, obj):
         if not obj.verified:
             return format_html(
-                '<a class="button" href="{}">Верифицировать</a>',
-                reverse('admin:verification', args=[obj.pk])
+                '<a class="button" href="{}">Верифицировать</a>', reverse("admin:verification", args=[obj.pk])
             )
         return format_html(
             obj.verified.first_name + '<a class="deletelink" href="{}"></a>',
-            reverse('admin:cancle_verificate', args=[obj.pk])
+            reverse("admin:cancle_verificate", args=[obj.pk]),
         )
 
-    event_actions.short_description = 'Верификация'
+    event_actions.short_description = "Верификация"
     event_actions.allow_tags = True
 
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
             url(
-                r'^(?P<event_id>.+)/verification/$',
+                r"^(?P<event_id>.+)/verification/$",
                 self.admin_site.admin_view(self.verificate),
-                name='verification',
+                name="verification",
             ),
             url(
-                r'^(?P<event_id>.+)/cancle_verificate/$',
+                r"^(?P<event_id>.+)/cancle_verificate/$",
                 self.admin_site.admin_view(self.cancle_verificate),
-                name='cancle_verificate',
+                name="cancle_verificate",
             ),
         ]
         return custom_urls + urls
@@ -85,7 +83,7 @@ class EventAdmin(admin.ModelAdmin):
         return report_exporter(event_id)
 
     generate_report.short_description = "Создать отчет"
-    export_as_csv.short_description = 'Экспортировать в csv'
+    export_as_csv.short_description = "Экспортировать в csv"
 
     def save_model(self, request, obj, *args) -> None:
         obj.author = request.user
@@ -94,34 +92,34 @@ class EventAdmin(admin.ModelAdmin):
 
 @admin.register(models.Direction)
 class DirectionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name')
+    list_display = ("id", "name")
 
 
 @admin.register(models.Level)
 class LevelAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name')
+    list_display = ("id", "name")
 
 
 @admin.register(models.Role)
 class RoleAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name')
+    list_display = ("id", "name")
 
 
 @admin.register(models.Format)
 class FormatAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name')
+    list_display = ("id", "name")
 
 
 @admin.register(models.Organization)
 class OrganizationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name')
+    list_display = ("id", "name")
 
 
 @admin.register(models.Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'author', 'event')
+    list_display = ("id", "author", "event")
 
 
 @admin.register(models.ImportantDate)
 class ImportantDateAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'date', 'event')
+    list_display = ("id", "name", "date", "event")
