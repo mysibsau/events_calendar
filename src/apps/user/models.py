@@ -1,5 +1,4 @@
 import uuid
-from typing import List, Optional, Set
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -12,7 +11,6 @@ class UserRole(models.IntegerChoices):
     author = 0, "Автор"
     moderator = 1, "Модератор"
     administrator = 2, "Администратор"
-    super_admin = 3, "Супер администратор"
 
 
 class PersonalStatus(models.IntegerChoices):
@@ -36,20 +34,6 @@ class User(AbstractUser):
     status = models.IntegerField("Статус", choices=PersonalStatus.choices, default=PersonalStatus.student)
     position = models.TextField("Должность", blank=True, default="", help_text="Должность или группа")
     contact_info = models.TextField("Контактная информация", blank=True, default="", help_text="Контактная информация")
-
-    @staticmethod
-    def get_invites(user: "User") -> List["User"]:
-        return User.objects.filter(pk__in=Invite.objects.filter(author=user).values_list("user", flat=True))
-
-    def get_my_invites(self, role: UserRole, user: Optional["User"] = None, result: Set["User"] = None) -> Set["User"]:
-        me = user or self
-        if not result:
-            result = set()
-        if me.role == role:
-            return {me}
-        for user in User.get_invites(me):
-            result |= set(user.get_my_invites(role, user, result))
-        return result
 
     def __str__(self):
         return self.get_full_name()
