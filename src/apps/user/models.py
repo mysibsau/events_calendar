@@ -23,7 +23,6 @@ class Invite(models.Model):
 
 
 class User(AbstractUser):
-    confirmed = models.BooleanField("Подтвержден", default=False)
     role = models.IntegerField("Роль", choices=UserRole.choices, default=UserRole.author)
 
     def __str__(self):

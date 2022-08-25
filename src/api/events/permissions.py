@@ -1,5 +1,6 @@
-from apps.user.models import UserRole
 from rest_framework.permissions import SAFE_METHODS, BasePermission
+
+from apps.user.models import UserRole
 
 
 class IsOwnerOrReadOnly(BasePermission):
@@ -19,14 +20,4 @@ class IsOwnerCommentOrReadOnly(BasePermission):
             or request.user
             and request.user.is_authenticated
             and (obj.author == request.user or request.user.is_staff)
-        )
-
-
-class IsConfirmedOrReadOnly(BasePermission):
-    def has_permission(self, request, view):
-        return bool(
-            request.method in SAFE_METHODS
-            or request.user
-            and request.user.is_authenticated
-            and (request.user.confirmed or request.user.is_staff)
         )
