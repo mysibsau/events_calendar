@@ -35,8 +35,7 @@ class User(AbstractUser):
     role = models.IntegerField("Роль", choices=UserRole.choices, default=UserRole.author)
     status = models.IntegerField("Статус", choices=PersonalStatus.choices, default=PersonalStatus.student)
     position = models.TextField("Должность", blank=True, default="", help_text="Должность или группа")
-    contact_number = models.CharField("Контактный телефон", max_length=13, default="")
-    contact_messenger = models.TextField("Мессенджер для связи", blank=True, default="")
+    contact_info = models.TextField("Контактная информация", blank=True, default="", help_text="Контактная информация")
 
     @staticmethod
     def get_invites(user: "User") -> List["User"]:
