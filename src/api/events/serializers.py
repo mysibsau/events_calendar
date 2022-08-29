@@ -49,12 +49,16 @@ class EventDetailSerializer(serializers.ModelSerializer):
     can_edit = serializers.BooleanField(read_only=True, label="Может ли данный пользователь редактировать мероприятие")
     important_dates = ImportantDateSerializer(many=True, required=False)
     author = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    status = serializers.CharField(read_only=True)
+    verified_date = serializers.DateTimeField(read_only=True)
 
     def create(self, validated_data: dict):
         important_dates = validated_data.pop("important_dates", None)
         event = models.Event.objects.create(**validated_data)
-        for important in important_dates:
-            models.ImportantDate.objects.create(event=event, **important)
+        important_dates = [{**dates, "event": event} for dates in important_dates]
+        if ImportantDateSerializer(data=important_dates, many=True).is_valid(raise_exception=True):
+            for date in important_dates:
+                models.ImportantDate.objects.create(**date)
         return event
 
     class Meta:

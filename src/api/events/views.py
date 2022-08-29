@@ -13,7 +13,7 @@ from apps.helpers.report_exporter import report_exporter
 
 
 class EventViewSet(ModelViewSet):
-    serializer_class = serializers.EventSerializer
+    serializer_class = serializers.EventDetailSerializer
     queryset = models.Event.objects.all()
     permission_classes = [permissions.IsOwnerOrReadOnly]
     filter_backends = (DjangoFilterBackend,)

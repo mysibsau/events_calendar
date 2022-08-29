@@ -45,7 +45,7 @@ class AuthTokenSerializer(AuthTokenSerializerDefault):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "username", "first_name", "last_name", "email", "role")
+        fields = ("id", "username", "first_name", "last_name", "contact_info", "role", "status", "position")
 
 
 class CreateInviteSerializer(serializers.Serializer):
