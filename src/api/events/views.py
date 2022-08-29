@@ -1,4 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import mixins, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -7,6 +8,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from api.events import permissions, serializers
+from api.user.serializer import MyInvitesSerializer
 from apps.events import models
 from apps.events.services import verification
 from apps.helpers.report_exporter import report_exporter
@@ -19,18 +21,6 @@ class EventViewSet(ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ("id", "name")
 
-    # def get_queryset(self):
-    #     queryset = super().get_queryset()
-    #     if not self.request.user.is_authenticated:
-    #         return queryset.filter(
-    #             verified=True,
-    #             coverage_participants_fact__isnull=True,  # TODO: заменить на статус мероприятия
-    #             important_dates__isnull=False,
-    #         )
-    #     if self.request.user.role == UserRole.author:
-    #         return queryset.filter(author=self.request.user)
-    #     return queryset
-
     def get_queryset(self):
         if self.action == "my":
             return self.queryset.filter(author=self.request.user)
@@ -39,6 +29,17 @@ class EventViewSet(ModelViewSet):
     @action(detail=False)
     def my(self, request):
         return super().list(request)
+
+    @swagger_auto_schema(responses={200: serializers.EventDetailSerializer}, request_body=MyInvitesSerializer)
+    @action(detail=False, methods=["post"])
+    def my_invites(self, request):
+        serializer = MyInvitesSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = request.user
+        invites = user.get_my_invites(serializer.validated_data["role"])
+        events = self.queryset.filter(author__in=invites)
+        serializer = self.get_serializer(events, many=True)
+        return Response(serializer.data)
 
     @action(detail=True, methods=["get"])
     def generate_report(self, request, pk=None):
