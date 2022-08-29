@@ -50,6 +50,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 class CreateInviteSerializer(serializers.Serializer):
     role = serializers.ChoiceField(label="Роль пользователя", choices=UserRole.choices)
+    position = serializers.CharField(label="Должность")
+    status = serializers.IntegerField(label="Статус")
 
 
 class InviteSerializer(serializers.Serializer):
