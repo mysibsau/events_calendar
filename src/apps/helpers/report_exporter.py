@@ -6,29 +6,26 @@ from docxtpl import DocxTemplate
 from apps.events.models import Event
 
 
-def report_exporter(event_id) -> FileResponse:
-    event_data = Event.objects.filter(id__in=event_id).first()
+def report_exporter(event: Event) -> FileResponse:
     template = DocxTemplate("/".join(__file__.split("/")[:-1]) + "/template.docx")
-    supervisor = "Начальник ОРСП"
 
-    if event_data.level.name.lower() == "институтский":
-        supervisor = "Заместитель директора по ВР"
+    supervisor = "Заместитель директора по ВР" if event.level.name.lower() == "институтский" else "Начальник ОРСП"
 
-    context = {
-        "event_name": str(event_data.name),
-        "organization": str(event_data.organization),
-        "start_date": str(event_data.start_date),
-        "place": str(event_data.place),
-        "level": str(event_data.level),
-        "description": "Описание",
-        "links": str(event_data.links),
-        "supervisor": supervisor,
-    }
+    template.render(
+        {
+            "event_name": event.name,
+            "organization": event.organization.name,
+            "start_date": event.start_date.strftime("%d.%m.%Y"),
+            "place": event.place,
+            "level": event.level.name,
+            "description": event.description,
+            "links": event.links,
+            "supervisor": supervisor,
+        }
+    )
 
-    template.render(context)
-
-    template.save(f"{event_data.name}_отчет.docx")
-    response = FileResponse(open(f"{event_data.name}_отчет.docx", "rb"))
-    os.remove(f"{event_data.name}_отчет.docx")
+    template.save(f"{event.name}_отчет.docx")
+    response = FileResponse(open(f"{event.name}_отчет.docx", "rb"))
+    os.remove(f"{event.name}_отчет.docx")
 
     return response

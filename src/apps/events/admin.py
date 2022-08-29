@@ -5,8 +5,6 @@ from django.urls import reverse
 from django.utils.html import format_html
 from rangefilter.filters import DateRangeFilter
 
-from apps.helpers.report_exporter import report_exporter
-
 from . import models
 from .services import verification
 from .services.exporters import export_as_csv
@@ -23,7 +21,7 @@ class EventAdmin(admin.ModelAdmin):
 
     inlines = [ImportantDateInline]
 
-    actions = ["export_as_csv", "generate_report"]
+    actions = ["export_as_csv"]
 
     fields = (
         ("name", "direction"),
@@ -77,12 +75,6 @@ class EventAdmin(admin.ModelAdmin):
 
     def export_as_csv(self, request, queryset):
         return export_as_csv(queryset)
-
-    def generate_report(self, request, event_id):
-        return report_exporter(event_id)
-
-    generate_report.short_description = "Создать отчет"
-    export_as_csv.short_description = "Экспортировать в csv"
 
     def save_model(self, request, obj, *args) -> None:
         obj.author = request.user

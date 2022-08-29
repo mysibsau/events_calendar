@@ -1,3 +1,5 @@
+from itertools import chain
+
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import mixins, status
@@ -12,6 +14,7 @@ from api.user.serializer import MyInvitesSerializer
 from apps.events import models
 from apps.events.services import verification
 from apps.helpers.report_exporter import report_exporter
+from apps.user.models import UserRole
 
 
 class EventViewSet(ModelViewSet):
@@ -44,7 +47,25 @@ class EventViewSet(ModelViewSet):
     @action(detail=True, methods=["get"])
     def generate_report(self, request, pk=None):
         event = self.get_object()
-        return report_exporter(event.id)
+        allowed_users = [
+            event.author,
+            *list(
+                chain.from_iterable(
+                    [
+                        request.user.get_my_invites(role)
+                        for role in [
+                            UserRole.author,
+                            UserRole.moderator,
+                            UserRole.administrator,
+                            UserRole.super_admin,
+                        ]
+                    ]
+                )
+            ),
+        ]
+        if event.author not in allowed_users:
+            return Response({"detail": "Это не ваше мероприятие"}, status=status.HTTP_403_FORBIDDEN)
+        return report_exporter(event)
 
 
 class DirectionViewSet(mixins.ListModelMixin, GenericViewSet):
