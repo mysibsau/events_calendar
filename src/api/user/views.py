@@ -10,7 +10,14 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
-from api.user.serializer import AuthTokenSerializer, CreateInviteSerializer, EditUser, InviteSerializer, UserSerializer
+from api.user.serializer import (
+    AuthTokenSerializer,
+    CreateInviteSerializer,
+    EditUser,
+    InviteSerializer,
+    MyInvitesSerializer,
+    UserSerializer,
+)
 from apps.user.models import Invite, User, UserRole
 
 
@@ -76,9 +83,12 @@ class UserViewSet(ReadOnlyModelViewSet, UpdateModelMixin):
         invite = serializer.save(author=user)
         return Response({"code": invite.id})
 
+    @swagger_auto_schema(responses={200: UserSerializer}, request_body=MyInvitesSerializer)
     @action(detail=False, methods=["get"])
     def my_invites(self, request):
+        serializer = MyInvitesSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         user = request.user
-        invites = user.get_my_invites(UserRole.author)
+        invites = user.get_my_invites(serializer.validated_data["role"])
         serializer = UserSerializer(invites, many=True)
         return Response(serializer.data)

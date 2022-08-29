@@ -61,6 +61,10 @@ class InviteSerializer(serializers.Serializer):
     code = serializers.CharField(label="Код приглашения", read_only=True)
 
 
+class MyInvitesSerializer(serializers.Serializer):
+    role = serializers.ChoiceField(label="Роль пользователя", choices=UserRole.choices)
+
+
 class EditUser(serializers.ModelSerializer):
     class Meta:
         model = User
