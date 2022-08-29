@@ -44,15 +44,13 @@ class EventViewSet(ModelViewSet):
         serializer = self.get_serializer(events, many=True)
         return Response(serializer.data)
 
-    @action(detail=True, methods=["get"])
-    def generate_report(self, request, pk=None):
-        event = self.get_object()
+    def validate_event(self, event, user):
         allowed_users = [
             event.author,
             *list(
                 chain.from_iterable(
                     [
-                        request.user.get_my_invites(role)
+                        user.get_my_invites(role)
                         for role in [
                             UserRole.author,
                             UserRole.moderator,
@@ -65,7 +63,29 @@ class EventViewSet(ModelViewSet):
         ]
         if event.author not in allowed_users:
             return Response({"detail": "Это не ваше мероприятие"}, status=status.HTTP_403_FORBIDDEN)
+
+    @action(detail=True, methods=["get"])
+    def generate_report(self, request, pk=None):
+        event = self.get_object()
+        if error := self.validate_event(event, self.request.user):
+            return error
         return report_exporter(event)
+
+    @action(detail=True, methods=["post"])
+    def verificate(self, request, pk=None):
+        event = self.get_object()
+        if error := self.validate_event(event, self.request.user):
+            return error
+        event.verificate()
+        return Response({"status": event.status})
+
+    @action(detail=True, methods=["post"])
+    def reject(self, request, pk=None):
+        event = self.get_object()
+        if error := self.validate_event(event, self.request.user):
+            return error
+        event.reject()
+        return Response({"status": event.status})
 
 
 class DirectionViewSet(mixins.ListModelMixin, GenericViewSet):

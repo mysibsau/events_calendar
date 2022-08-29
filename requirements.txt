@@ -31,3 +31,4 @@ uritemplate==3.0.1
 urllib3==1.26.6
 whitenoise==5.3.0
 docxtpl~=0.16.4
+django-lifecycle==1.0.0
