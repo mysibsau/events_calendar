@@ -23,7 +23,10 @@ class EventStatus(models.TextChoices):
     verified = 3, "Верефицированно"
 
 
-"""Добавить зеленую или желтую галку"""
+class Organiztor(models.Model):
+    name = models.CharField(max_length=255)
+    position = models.CharField(max_length=255)
+    description = models.TextField()
 
 
 class Event(models.Model):
@@ -50,7 +53,6 @@ class Event(models.Model):
     place = models.CharField("Место проведения", max_length=256)
     coverage_participants_plan = models.PositiveSmallIntegerField("Охват участников (план)")
     number_organizers = models.PositiveSmallIntegerField("Из них организаторов", blank=True, null=True)
-    position = models.CharField("Должность", max_length=512, blank=True)
     author = models.ForeignKey(User, models.SET_NULL, "my_events", verbose_name="Автор", null=True)
     organization = models.ForeignKey(
         Organization,
@@ -59,6 +61,7 @@ class Event(models.Model):
         null=True,
         blank=True,
     )
+    organizators = models.ManyToManyField(Organiztor, null=True, blank=True)
     coverage_participants_fact = models.PositiveSmallIntegerField("Охват участников (факт)", blank=True, null=True)
     links = models.TextField("Ссылки на материалы в интернете о мероприятии (факт)", blank=True)
     verified = models.ForeignKey(

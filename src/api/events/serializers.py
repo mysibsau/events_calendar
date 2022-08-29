@@ -43,6 +43,12 @@ class EventSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class OrganizatorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Organiztor
+        fields = "__all__"
+
+
 class EventDetailSerializer(serializers.ModelSerializer):
     verified = serializers.StringRelatedField(source="verified.first_name", read_only=True)
     comments = CommentSerializer(many=True, read_only=True)
@@ -51,6 +57,7 @@ class EventDetailSerializer(serializers.ModelSerializer):
     author = serializers.HiddenField(default=serializers.CurrentUserDefault())
     status = serializers.CharField(read_only=True)
     verified_date = serializers.DateTimeField(read_only=True)
+    organizators = OrganizatorSerializer(many=True, required=False)
 
     def create(self, validated_data: dict):
         important_dates = validated_data.pop("important_dates", None)

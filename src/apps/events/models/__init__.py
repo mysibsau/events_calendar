@@ -1,12 +1,11 @@
-from .direction import Direction
-from .level import Level
-from .role import Role
-from .format import Format
-from .organization import Organization
 from .comment import Comment
-from .event import Event
+from .direction import Direction
+from .event import Event, Organiztor
+from .format import Format
 from .important_dates import ImportantDate
-
+from .level import Level
+from .organization import Organization
+from .role import Role
 
 __all__ = [
     Direction,
@@ -17,4 +16,5 @@ __all__ = [
     Comment,
     Event,
     ImportantDate,
+    Organiztor,
 ]
