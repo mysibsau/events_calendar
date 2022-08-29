@@ -84,7 +84,7 @@ class UserViewSet(ReadOnlyModelViewSet, UpdateModelMixin):
         return Response({"code": invite.id})
 
     @swagger_auto_schema(responses={200: UserSerializer}, request_body=MyInvitesSerializer)
-    @action(detail=False, methods=["get"])
+    @action(detail=False, methods=["post"])
     def my_invites(self, request):
         serializer = MyInvitesSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
