@@ -132,5 +132,25 @@ class CommentViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin, mixins.De
 
 
 class EventGroupViewsSet(ModelViewSet):
-    queryset = models.EventGroup.objects.all()
     serializer_class = serializers.EventGroupSerializer
+    queryset = models.EventGroup.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        allowed_users = [
+            self.request.user,
+            *list(
+                chain.from_iterable(
+                    [
+                        self.request.user.get_my_invites(role)
+                        for role in [
+                            UserRole.author,
+                            UserRole.moderator,
+                            UserRole.administrator,
+                            UserRole.super_admin,
+                        ]
+                    ]
+                )
+            ),
+        ]
+        return models.EventGroup.objects.filter(author__in=allowed_users)

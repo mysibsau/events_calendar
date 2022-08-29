@@ -103,3 +103,8 @@ class OrganizationAdmin(admin.ModelAdmin):
 @admin.register(models.Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ("id", "author", "event")
+
+
+@admin.register(models.EventGroup)
+class GroupEvent(admin.ModelAdmin):
+    list_display = ("id", "name", "author")

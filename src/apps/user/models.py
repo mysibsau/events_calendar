@@ -47,8 +47,9 @@ class User(AbstractUser):
             result = set()
         if me.role == role:
             return {me}
-        for user in User.get_invites(me):
-            result |= set(user.get_my_invites(role, user, result))
+        for user_ in User.get_invites(me):
+            user_.get_my_invites(role, result=result)
+            result.add(user_)
         return result
 
     def __str__(self):

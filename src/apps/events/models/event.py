@@ -33,7 +33,8 @@ class EventGroup(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(verbose_name="Описание", default="")
     start_date = models.DateField("Дата начала")
-    stop_date = models.DateField("Дата окончания", blank=True)
+    stop_date = models.DateField("Дата окончания", blank=True, null=True)
+    author = models.ForeignKey(User, models.SET_NULL, blank=True, null=True, verbose_name="Автор")
 
 
 class Event(models.Model):

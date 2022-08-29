@@ -88,11 +88,13 @@ class OrganizationSerializer(serializers.ModelSerializer):
 
 
 class EventGroupSerializer(serializers.ModelSerializer):
-    events = EventDetailSerializer(many=True)
+    events = EventDetailSerializer(many=True, read_only=True)
+    events_ids = serializers.ListField(child=serializers.IntegerField(), write_only=True)
+    author = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
-    def save(self, **kwargs):
+    def create(self, validated_data):
         user = self.context["request"].user
-        allowed_users = [
+        allowed_users = {
             user,
             *list(
                 chain.from_iterable(
@@ -107,11 +109,15 @@ class EventGroupSerializer(serializers.ModelSerializer):
                     ]
                 )
             ),
-        ]
-        for event in self.validated_data["events"]:
-            if event.author not in allowed_users:
-                raise serializers.ValidationError(f"Вы не можете добавить мероприятие {event.id} в группу")
-        return super().save(**kwargs)
+        }
+        print(allowed_users, flush=True)
+        events = models.Event.objects.filter(id__in=validated_data.pop("events_ids"))
+        for id, author in events.values_list("id", "author"):
+            if author not in [user.pk for user in allowed_users]:
+                raise serializers.ValidationError(f"Вы не можете добавить мероприятие {id} в группу")
+        validated_data["events"] = events
+
+        return super().create(validated_data)
 
     class Meta:
         model = models.EventGroup
