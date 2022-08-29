@@ -129,3 +129,8 @@ class CommentViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin, mixins.De
     def update(self, request, *args, **kwargs):
         kwargs["partial"] = True
         return super().update(request, *args, **kwargs)
+
+
+class EventGroupViewsSet(ModelViewSet):
+    queryset = models.EventGroup.objects.all()
+    serializer_class = serializers.EventGroupSerializer

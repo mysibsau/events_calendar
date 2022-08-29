@@ -29,6 +29,13 @@ class Organiztor(models.Model):
     description = models.TextField()
 
 
+class EventGroup(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField(verbose_name="Описание", default="")
+    start_date = models.DateField("Дата начала")
+    stop_date = models.DateField("Дата окончания", blank=True)
+
+
 class Event(models.Model):
     direction = models.ForeignKey(
         Direction,
@@ -68,6 +75,7 @@ class Event(models.Model):
         User, models.SET_NULL, "my_verifications", verbose_name="Кто верифицировал", null=True, blank=True
     )
     verified_date = models.DateField("Дата верификации", blank=True, null=True)
+    group = models.ForeignKey(EventGroup, models.SET_NULL, "events", null=True, blank=True)
 
     class Meta:
         verbose_name = "Мероприятие"

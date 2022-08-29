@@ -1,7 +1,9 @@
+from itertools import chain
+
 from rest_framework import serializers
 
 from apps.events import models
-from apps.user.models import User
+from apps.user.models import User, UserRole
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -17,7 +19,6 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Comment
         fields = ("id", "author", "author_name", "text", "event", "date")
-
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -51,7 +52,6 @@ class EventDetailSerializer(serializers.ModelSerializer):
     verified_date = serializers.DateTimeField(read_only=True)
     organizators = OrganizatorSerializer(many=True, required=False)
 
-
     class Meta:
         model = models.Event
         fields = "__all__"
@@ -84,4 +84,35 @@ class FormatSerializer(serializers.ModelSerializer):
 class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Organization
+        fields = "__all__"
+
+
+class EventGroupSerializer(serializers.ModelSerializer):
+    events = EventDetailSerializer(many=True)
+
+    def save(self, **kwargs):
+        user = self.context["request"].user
+        allowed_users = [
+            user,
+            *list(
+                chain.from_iterable(
+                    [
+                        user.get_my_invites(role)
+                        for role in [
+                            UserRole.author,
+                            UserRole.moderator,
+                            UserRole.administrator,
+                            UserRole.super_admin,
+                        ]
+                    ]
+                )
+            ),
+        ]
+        for event in self.validated_data["events"]:
+            if event.author not in allowed_users:
+                raise serializers.ValidationError(f"Вы не можете добавить мероприятие {event.id} в группу")
+        return super().save(**kwargs)
+
+    class Meta:
+        model = models.EventGroup
         fields = "__all__"

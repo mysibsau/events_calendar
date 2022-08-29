@@ -6,6 +6,7 @@ from api.user.views import UserViewSet, obtain_auth_token
 
 router = SimpleRouter()
 router.register("events", event_views.EventViewSet)
+router.register("event_groups", event_views.EventGroupViewsSet)
 router.register("users", UserViewSet)
 router.register("comment", event_views.CommentViewSet)
 router.register("reference/directions", event_views.DirectionViewSet)

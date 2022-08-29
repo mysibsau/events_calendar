@@ -1,6 +1,6 @@
 from .comment import Comment
 from .direction import Direction
-from .event import Event, Organiztor
+from .event import Event, EventGroup, Organiztor
 from .format import Format
 from .level import Level
 from .organization import Organization
@@ -14,5 +14,6 @@ __all__ = [
     Organization,
     Comment,
     Event,
+    EventGroup,
     Organiztor,
 ]
