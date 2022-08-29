@@ -29,7 +29,6 @@ def report_exporter(event_id) -> FileResponse:
         "links": str(event_data.links),
         "supervisor": supervisor,
     }
-
     template.render(context)
     template.save(f"{event_data.name}_отчет.docx")
     doc = Document(f"{event_data.name}_отчет.docx")
