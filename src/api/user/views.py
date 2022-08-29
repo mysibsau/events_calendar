@@ -10,13 +10,7 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
-from api.user.serializer import (
-    AuthTokenSerializer,
-    CreateInviteSerializer,
-    EditUser,
-    InviteSerializer,
-    UserSerializer,
-)
+from api.user.serializer import AuthTokenSerializer, CreateInviteSerializer, EditUser, InviteSerializer, UserSerializer
 from apps.user.models import Invite, User, UserRole
 
 
@@ -79,7 +73,7 @@ class UserViewSet(ReadOnlyModelViewSet, UpdateModelMixin):
         role = serializer.validated_data["role"]
         if user.role < UserRole.moderator or role >= user.role:
             return Response({"detail": "Недостаточно прав"}, status=403)
-        invite = Invite.objects.create(author=user, role=role)
+        invite = serializer.save(author=user)
         return Response({"code": invite.id})
 
     @action(detail=False, methods=["get"])

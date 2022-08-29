@@ -2,7 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework.authtoken.serializers import AuthTokenSerializer as AuthTokenSerializerDefault
 
-from apps.user.models import Invite, User, UserRole
+from apps.user.models import Invite, PersonalStatus, User, UserRole
 
 
 class AuthTokenSerializer(AuthTokenSerializerDefault):
@@ -48,10 +48,13 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ("id", "username", "first_name", "last_name", "contact_info", "role", "status", "position")
 
 
-class CreateInviteSerializer(serializers.Serializer):
+class CreateInviteSerializer(serializers.ModelSerializer):
     role = serializers.ChoiceField(label="Роль пользователя", choices=UserRole.choices)
-    position = serializers.CharField(label="Должность")
-    status = serializers.IntegerField(label="Статус")
+    status = serializers.ChoiceField(label="Статус пользователя", choices=PersonalStatus.choices)
+
+    class Meta:
+        model = Invite
+        fields = ("role", "position", "status")
 
 
 class InviteSerializer(serializers.Serializer):
