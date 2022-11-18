@@ -20,8 +20,6 @@ services:
       - ./volumes/static:/static
     depends_on:
       - database
-    ports:
-      - 80:80
     command: bash -c "
       python manage.py migrate &&
       python manage.py collectstatic --noinput &&
@@ -31,3 +29,11 @@ services:
         --reload
         --max-requests 100
         --workers 4 core.wsgi:application"
+    networks:
+      - default
+      - mysibsau
+
+
+networks:
+  mysibsau:
+    external: true
