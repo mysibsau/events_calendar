@@ -25,7 +25,7 @@ class EventAdmin(admin.ModelAdmin):
         ("start_date", "stop_date"),
         "place",
         ("coverage_participants_plan", "number_organizers"),
-        ("position", "organization"),
+        "organization",
         "coverage_participants_fact",
         "links",
     )
