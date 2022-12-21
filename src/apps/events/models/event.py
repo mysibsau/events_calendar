@@ -27,10 +27,7 @@ class Organiztor(models.Model):
 
 class EventGroup(models.Model):
     name = models.CharField(max_length=255)
-    description = models.TextField(verbose_name="Описание", default="")
-    start_date = models.DateField("Дата начала")
-    stop_date = models.DateField("Дата окончания", blank=True, null=True)
-    author = models.ForeignKey(User, models.SET_NULL, blank=True, null=True, verbose_name="Автор")
+    author = models.ForeignKey(User, blank=True, null=True, verbose_name="Автор", on_delete=models.CASCADE)
 
 
 fields = [

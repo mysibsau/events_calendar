@@ -28,6 +28,7 @@ class EventAdmin(admin.ModelAdmin):
         "organization",
         "coverage_participants_fact",
         "links",
+        'group'
     )
 
     def event_actions(self, obj):
@@ -107,4 +108,4 @@ class CommentAdmin(admin.ModelAdmin):
 
 @admin.register(models.EventGroup)
 class GroupEvent(admin.ModelAdmin):
-    list_display = ("id", "name", "author")
+    list_display = ("id", "name")

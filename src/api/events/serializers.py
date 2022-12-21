@@ -92,33 +92,33 @@ class EventGroupSerializer(serializers.ModelSerializer):
     events_ids = serializers.ListField(child=serializers.IntegerField(), write_only=True)
     author = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
-    def create(self, validated_data):
-        user = self.context["request"].user
-        allowed_users = {
-            user,
-            *list(
-                chain.from_iterable(
-                    [
-                        user.get_my_invites(role)
-                        for role in [
-                            UserRole.author,
-                            UserRole.moderator,
-                            UserRole.administrator,
-                            UserRole.super_admin,
-                        ]
-                    ]
-                )
-            ),
-        }
-        print(allowed_users, flush=True)
-        events = models.Event.objects.filter(id__in=validated_data.pop("events_ids"))
-        for id, author in events.values_list("id", "author"):
-            if author not in [user.pk for user in allowed_users]:
-                raise serializers.ValidationError(f"Вы не можете добавить мероприятие {id} в группу")
-        validated_data["events"] = events
+    def create(self, validated_data: dict):
+        events_ids = validated_data.pop("events_ids", None)
+        group = models.EventGroup.objects.create(**validated_data)
+        for event_id in events_ids:
+            event = models.Event.objects.filter(id=event_id).first()
+            if event.group is None:
+                event.group = group
+                event.save()
 
-        return super().create(validated_data)
+        return group
+
+    def update(self, instance: models.EventGroup, validated_data: dict):
+        old_events = models.Event.objects.all().filter(group=instance)
+        new_events_ids = validated_data.pop("events_ids", None)
+
+        for event in old_events:
+            event.group = None
+            event.save()
+
+        for event_id in new_events_ids:
+            event = models.Event.objects.filter(id=event_id).first()
+            event.group = instance
+            event.save()
+
+        return super().update(instance, validated_data)
 
     class Meta:
         model = models.EventGroup
         fields = "__all__"
+
