@@ -131,6 +131,7 @@ class Event(LifecycleModel):
     def reject(self):
         self.status = {
             EventStatus.in_process: EventStatus.rejected,
-            EventStatus.wait_for_report: EventStatus.rejected_report
+            EventStatus.wait_for_report: EventStatus.rejected_report,
+            EventStatus.wait_for_report_verified: EventStatus.rejected_report,
         }.get(self.status, EventStatus.in_process)
         self.save()
