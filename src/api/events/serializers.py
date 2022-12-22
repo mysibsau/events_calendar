@@ -51,10 +51,14 @@ class EventDetailSerializer(serializers.ModelSerializer):
     status = serializers.CharField(read_only=True)
     verified_date = serializers.DateTimeField(read_only=True)
     organizators = OrganizatorSerializer(many=True, required=False)
-    author_full_name = serializers.SerializerMethodField(method_name='get_author_full_name')
+    author_name = serializers.SerializerMethodField(method_name='get_author_full_name')
+    author_id = serializers.SerializerMethodField(method_name='get_author_id')
 
     def get_author_full_name(self, obj):
-        return str(obj.author)
+        return str(obj.author.first_name)
+
+    def get_author_id(self, obj):
+        return obj.author.id
 
     class Meta:
         model = models.Event
@@ -124,5 +128,23 @@ class EventGroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.EventGroup
+        fields = "__all__"
+
+    
+class ReportSerializer(serializers.ModelSerializer):
+    organizators = OrganizatorSerializer(many=True, required=False, read_only=True)
+
+    def create(self, validated_data):
+        orgs = validated_data.pop('organizators', None)
+        report = models.Report.objects.create(**validated_data)
+
+        for organizator in orgs:
+            org = models.Organiztor.objects.create(**organizator)
+            report.organizators.add(org)
+
+        return report
+
+    class Meta:
+        model = models.Report
         fields = "__all__"
 
