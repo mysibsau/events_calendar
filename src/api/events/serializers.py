@@ -55,7 +55,7 @@ class EventDetailSerializer(serializers.ModelSerializer):
     author_id = serializers.SerializerMethodField(method_name='get_author_id')
 
     def get_author_full_name(self, obj):
-        return str(obj.author.first_name)
+        return str(obj.author)
 
     def get_author_id(self, obj):
         return obj.author.id
@@ -129,4 +129,3 @@ class EventGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.EventGroup
         fields = "__all__"
-
