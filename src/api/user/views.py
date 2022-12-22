@@ -92,3 +92,29 @@ class UserViewSet(ReadOnlyModelViewSet, UpdateModelMixin):
         invites = user.get_my_invites(serializer.validated_data["role"])
         serializer = UserSerializer(invites, many=True)
         return Response(serializer.data)
+
+    @action(detail=False, methods=['get'])
+    def get_all_authors(self, request):
+        if self.request.user.role not in [UserRole.administrator, UserRole.super_admin]:
+            return Response(
+                {'response': 'У вас недостаточно прав'}
+            )
+        authors_list = []
+        authors = User.objects.all().filter(role=0)
+        for author in authors:
+            authors_list.append(UserSerializer(author).data)
+
+        return Response(authors_list)
+
+    @action(detail=False, methods=['get'])
+    def get_all_moderators(self, request):
+        if self.request.user.role not in [UserRole.administrator, UserRole.super_admin]:
+            return Response(
+                {'response': 'У вас недостаточно прав'}
+            )
+        moderators_list = []
+        moderators = User.objects.all().filter(role=1)
+        for moderator in moderators:
+            moderators_list.append(UserSerializer(moderator).data)
+
+        return Response(moderators_list)

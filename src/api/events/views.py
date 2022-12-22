@@ -96,6 +96,7 @@ class EventViewSet(ModelViewSet):
             report.organizators.add(orgz)
             orgz.save()
         event.report = report
+        event.status = 5
         event.save()
         report.save()
 

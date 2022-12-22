@@ -18,6 +18,7 @@ class EventStatus(models.TextChoices):
     wait_for_report = 2, "В ожидании отчета"
     verified = 3, "Верефицированно"
     rejected_report = 4, "Отчет отклонен"
+    wait_for_report_verified = 5, "В ожидании верефикации отчета"
 
 
 class Organiztor(models.Model):
@@ -121,14 +122,15 @@ class Event(LifecycleModel):
 
     def verificate(self):
         self.status = {
-            EventStatus.wait_for_report: EventStatus.verified,
             EventStatus.in_process: EventStatus.wait_for_report,
+            EventStatus.wait_for_report: EventStatus.wait_for_report_verified,
+            EventStatus.wait_for_report_verified: EventStatus.verified
         }.get(self.status, self.status)
         self.save()
 
     def reject(self):
         self.status = {
-            EventStatus.wait_for_report: EventStatus.rejected_report,
-            EventStatus.in_process: EventStatus.rejected
+            EventStatus.in_process: EventStatus.rejected,
+            EventStatus.wait_for_report: EventStatus.rejected_report
         }.get(self.status, EventStatus.in_process)
         self.save()
