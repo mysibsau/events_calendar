@@ -113,11 +113,3 @@ class Event(LifecycleModel):
             EventStatus.in_process: EventStatus.rejected
         }.get(self.status, EventStatus.in_process)
         self.save()
-
-
-class Report(models.Model):
-    start_date = models.DateField("Дата начала Факт")
-    stop_date = models.DateField("Дата конца Факт")
-    place = models.CharField(max_length=512)
-    coverage_participants_fact = models.PositiveSmallIntegerField("Охват участников (факт)", blank=True, null=True)
-    links = models.TextField("Ссылки на материалы в интернете о мероприятии (факт)", blank=True)
