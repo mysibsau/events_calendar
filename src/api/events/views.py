@@ -15,6 +15,7 @@ from apps.events import models
 from apps.events.services import verification
 from apps.helpers.report_exporter import report_exporter
 from apps.user.models import UserRole
+from apps.events.services.exporters import export_as_csv
 
 
 class EventViewSet(ModelViewSet):
@@ -115,11 +116,20 @@ class EventViewSet(ModelViewSet):
         event = self.get_object()
         if error := self.validate_event(event, self.request.user):
             return error
+        if event.report is None:
+            return Response({
+                "response": "Для этого мероприятия еще нет отчета"
+            })
         report = event.report
         report = serializers.ReportSerializer(report)
 
         return Response(report.data)
 
+    @action(detail=False, methods=["get"])
+    def get_reports_csv(self, request, pk=None):
+        reports = models.Report.objects.all().filter(event__status=3)
+
+        return export_as_csv(reports)
 
     @action(detail=True, methods=["post"])
     def verificate(self, request, pk=None):

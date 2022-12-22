@@ -28,12 +28,12 @@ class Organiztor(models.Model):
 
 class Report(models.Model):
     name = models.CharField("Название мероприятия", max_length=512)
-    start_date_fact = models.DateField("Дата начала Факт")
-    stop_date_fact = models.DateField("Дата конца Факт")
-    place_fact = models.CharField(max_length=512)
-    coverage_participants_fact = models.PositiveSmallIntegerField("Охват участников (факт)", blank=True, null=True)
-    links = models.TextField("Ссылки на материалы в интернете о мероприятии (факт)", blank=True)
-    organizators = models.ManyToManyField(Organiztor, null=True, blank=True)
+    start_date_fact = models.DateField("Дата начала Факт.")
+    stop_date_fact = models.DateField("Дата конца Факт.")
+    place_fact = models.CharField(max_length=512, verbose_name="Место проведения факт.")
+    coverage_participants_fact = models.PositiveSmallIntegerField("Охват участников (факт.)", blank=True, null=True)
+    links = models.TextField("Ссылки на материалы в интернете о мероприятии (факт.)", blank=True)
+    organizators = models.ManyToManyField(Organiztor, null=True, blank=True, verbose_name="Организаторы")
     organization = models.ForeignKey(
         Organization,
         models.SET_NULL,
