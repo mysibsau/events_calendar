@@ -72,8 +72,43 @@ class EventViewSet(ModelViewSet):
     @action(detail=True, methods=["post"])
     def generate_report(self, request, pk=None):
         event = self.get_object()
+        if error := self.validate_event(event, self.request.user):
+            return error
+        report = models.Report.objects.create(
+            name=event.name,
+            description=event.description,
+            organization=event.organization,
+            start_date_fact=request.data['start_date_fact'],
+            stop_date_fact=request.data['stop_date_fact'],
+            place_fact=request.data['place_fact'],
+            coverage_participants_fact=request.data['coverage_participants_fact'],
+            links=request.data['links']
 
-        return report_exporter(event, request)
+        )
+
+        for organizator in request.data['organizators']:
+            orgz = models.Organiztor.objects.create(
+                name=organizator['name'],
+                position=organizator['position'],
+                description=organizator['description']
+            )
+            report.organizators.add(orgz)
+            orgz.save()
+        event.report = report
+        event.save()
+        report.save()
+
+        return Response({
+            "report_id": report.id
+        })
+
+    @action(detail=True, methods=["get"])
+    def export_report(self, request, pk=None):
+        event = self.get_object()
+        if error := self.validate_event(event, self.request.user):
+            return error
+
+        return report_exporter(event)
 
     @action(detail=True, methods=["post"])
     def verificate(self, request, pk=None):

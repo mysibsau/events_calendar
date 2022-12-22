@@ -26,6 +26,24 @@ class Organiztor(models.Model):
     description = models.TextField()
 
 
+class Report(models.Model):
+    name = models.CharField("Название мероприятия", max_length=512)
+    start_date_fact = models.DateField("Дата начала Факт")
+    stop_date_fact = models.DateField("Дата конца Факт")
+    place_fact = models.CharField(max_length=512)
+    coverage_participants_fact = models.PositiveSmallIntegerField("Охват участников (факт)", blank=True, null=True)
+    links = models.TextField("Ссылки на материалы в интернете о мероприятии (факт)", blank=True)
+    organizators = models.ManyToManyField(Organiztor, null=True, blank=True)
+    organization = models.ForeignKey(
+        Organization,
+        models.SET_NULL,
+        verbose_name="Ответственное подразделение",
+        null=True,
+        blank=True,
+    )
+    description = models.TextField(verbose_name="Описание", default="")
+
+
 class EventGroup(models.Model):
     name = models.CharField(max_length=255)
     author = models.ForeignKey(User, blank=True, null=True, verbose_name="Автор", on_delete=models.CASCADE)
@@ -92,6 +110,7 @@ class Event(LifecycleModel):
     )
     verified_date = models.DateField("Дата верификации", blank=True, null=True)
     group = models.ForeignKey(EventGroup, models.SET_NULL, "events", null=True, blank=True)
+    report = models.ForeignKey(Report, models.SET_NULL, 'event', null=True, blank=True)
 
     class Meta:
         verbose_name = "Мероприятие"

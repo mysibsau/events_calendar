@@ -10,6 +10,11 @@ from .services import verification
 from .services.exporters import export_as_csv
 
 
+@admin.register(models.Report)
+class RepAdmin(admin.ModelAdmin):
+    pass
+
+
 @admin.register(models.Event)
 class EventAdmin(admin.ModelAdmin):
     list_display = ("name", "start_date", "verified_date", "event_actions", "author", "status")
@@ -28,7 +33,8 @@ class EventAdmin(admin.ModelAdmin):
         "organization",
         "coverage_participants_fact",
         "links",
-        'group'
+        'group',
+        'organizators'
     )
 
     def event_actions(self, obj):
