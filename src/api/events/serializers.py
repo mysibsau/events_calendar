@@ -130,21 +130,3 @@ class EventGroupSerializer(serializers.ModelSerializer):
         model = models.EventGroup
         fields = "__all__"
 
-    
-class ReportSerializer(serializers.ModelSerializer):
-    organizators = OrganizatorSerializer(many=True, required=False, read_only=True)
-
-    def create(self, validated_data):
-        orgs = validated_data.pop('organizators', None)
-        report = models.Report.objects.create(**validated_data)
-
-        for organizator in orgs:
-            org = models.Organiztor.objects.create(**organizator)
-            report.organizators.add(org)
-
-        return report
-
-    class Meta:
-        model = models.Report
-        fields = "__all__"
-
