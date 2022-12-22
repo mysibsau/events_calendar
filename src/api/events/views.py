@@ -20,7 +20,7 @@ from apps.user.models import UserRole
 class EventViewSet(ModelViewSet):
     serializer_class = serializers.EventDetailSerializer
     queryset = models.Event.objects.all()
-    #permission_classes = [permissions.IsOwnerOrReadOnly]
+    permission_classes = [permissions.IsOwnerOrReadOnly]
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ("level",
                      "educational_work_in_opop",
@@ -69,11 +69,11 @@ class EventViewSet(ModelViewSet):
         if event.author not in allowed_users:
             return Response({"detail": "Это не ваше мероприятие"}, status=status.HTTP_403_FORBIDDEN)
 
-    @action(detail=True, methods=["get"])
+    @action(detail=True, methods=["post"])
     def generate_report(self, request, pk=None):
         event = self.get_object()
 
-        return report_exporter(event)
+        return report_exporter(event, request)
 
     @action(detail=True, methods=["post"])
     def verificate(self, request, pk=None):
