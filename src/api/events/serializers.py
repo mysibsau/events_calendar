@@ -51,6 +51,10 @@ class EventDetailSerializer(serializers.ModelSerializer):
     status = serializers.CharField(read_only=True)
     verified_date = serializers.DateTimeField(read_only=True)
     organizators = OrganizatorSerializer(many=True, required=False)
+    author_full_name = serializers.SerializerMethodField(method_name='get_author_full_name')
+
+    def get_author_full_name(self, obj):
+        return str(obj.author)
 
     class Meta:
         model = models.Event

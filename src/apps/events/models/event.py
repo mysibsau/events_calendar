@@ -8,6 +8,7 @@ from .level import Level
 from .organization import Organization
 from .role import Role
 
+
 User = settings.AUTH_USER_MODEL
 
 
@@ -99,13 +100,6 @@ class Event(LifecycleModel):
     def __str__(self):
         return f"{self.name} ({self.start_date})"
 
-    @hook(BEFORE_SAVE, when_any=fields)
-    def update_status(self):
-        self.status = {
-            EventStatus.rejected: EventStatus.in_process,
-            EventStatus.rejected_report: EventStatus.wait_for_report,
-        }.get(self.status, self.status)
-
     def verificate(self):
         self.status = {
             EventStatus.wait_for_report: EventStatus.verified,
@@ -115,7 +109,7 @@ class Event(LifecycleModel):
 
     def reject(self):
         self.status = {
-            EventStatus.in_process: EventStatus.rejected,
             EventStatus.wait_for_report: EventStatus.rejected_report,
-        }.get(self.status, self.status)
+            EventStatus.in_process: EventStatus.rejected
+        }.get(self.status, EventStatus.in_process)
         self.save()

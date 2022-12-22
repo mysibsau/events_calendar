@@ -32,12 +32,13 @@ def report_exporter(event: Event) -> FileResponse:
     template.save(f"{event.name}_отчет.docx")
     doc = Document(f"{event.name}_отчет.docx")
     table = doc.tables[0]
-    for i in range(1, 4):
-        table.add_row()
-        table.cell(i, 0).text = str(i)
-        table.cell(i, 1).text = f"{test_data['FIO']}, {test_data['INST']}"
-        table.cell(i, 2).text = test_data["ROLE"]
-        table.cell(i, 3).text = test_data["COM"]
+    # for i in range(1, 4):
+    #     table.add_row()
+    #     table.cell(i, 0).text = str(i)
+    #     table.cell(i, 1).text = f"{test_data['FIO']}, {test_data['INST']}"
+    #     table.cell(i, 2).text = test_data["ROLE"]
+    #     table.cell(i, 3).text = test_data["COM"]
+
     doc.save(f"{event.name}_отчет.docx")
     response = FileResponse(open(f"{event.name}_отчет.docx", "rb"))
     os.remove(f"{event.name}_отчет.docx")

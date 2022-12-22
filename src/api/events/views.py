@@ -20,7 +20,7 @@ from apps.user.models import UserRole
 class EventViewSet(ModelViewSet):
     serializer_class = serializers.EventDetailSerializer
     queryset = models.Event.objects.all()
-    permission_classes = [permissions.IsOwnerOrReadOnly]
+    #permission_classes = [permissions.IsOwnerOrReadOnly]
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ("level",
                      "educational_work_in_opop",
@@ -72,8 +72,7 @@ class EventViewSet(ModelViewSet):
     @action(detail=True, methods=["get"])
     def generate_report(self, request, pk=None):
         event = self.get_object()
-        if error := self.validate_event(event, self.request.user):
-            return error
+
         return report_exporter(event)
 
     @action(detail=True, methods=["post"])
