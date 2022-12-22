@@ -110,6 +110,17 @@ class EventViewSet(ModelViewSet):
 
         return report_exporter(event)
 
+    @action(detail=True, methods=["get"])
+    def get_report(self, request, pk=None):
+        event = self.get_object()
+        if error := self.validate_event(event, self.request.user):
+            return error
+        report = event.report
+        report = serializers.ReportSerializer(report)
+
+        return Response(report.data)
+
+
     @action(detail=True, methods=["post"])
     def verificate(self, request, pk=None):
         event = self.get_object()

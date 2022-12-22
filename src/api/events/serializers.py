@@ -129,3 +129,11 @@ class EventGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.EventGroup
         fields = "__all__"
+
+
+class ReportSerializer(serializers.ModelSerializer):
+    organizators = OrganizatorSerializer(many=True, required=False)
+
+    class Meta:
+        model = models.Report
+        fields = "__all__"
