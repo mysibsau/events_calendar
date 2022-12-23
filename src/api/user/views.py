@@ -6,7 +6,7 @@ from rest_framework.authtoken.views import ObtainAuthToken as StandartObtainAuth
 from rest_framework.decorators import action
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
@@ -49,7 +49,7 @@ class StandardResultsSetPagination(PageNumberPagination):
 
 class UserViewSet(ReadOnlyModelViewSet, UpdateModelMixin):
     serializer_class = UserSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
     pagination_class = StandardResultsSetPagination
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]

@@ -118,9 +118,12 @@ class EventViewSet(ModelViewSet):
         if error := self.validate_event(event, self.request.user):
             return error
         if event.report is None:
-            return Response({
-                "response": "Для этого мероприятия еще нет отчета"
-            })
+            return Response(
+                {
+                    "response": "Для этого мероприятия еще нет отчета"
+                },
+                status=status.HTTP_403_FORBIDDEN
+            )
         report = event.report
         report = serializers.ReportSerializer(report)
 
