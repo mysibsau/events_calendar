@@ -126,6 +126,11 @@ class Event(LifecycleModel):
             EventStatus.wait_for_report: EventStatus.wait_for_report_verified,
             EventStatus.wait_for_report_verified: EventStatus.verified
         }.get(self.status, self.status)
+
+        if self.status == EventStatus.verified:
+            self.start_date = self.report.start_date_fact
+            self.stop_date = self.report.stop_date_fact
+            
         self.save()
 
     def reject(self):
