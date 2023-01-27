@@ -36,6 +36,7 @@ class User(AbstractUser):
     status = models.IntegerField("Статус", choices=PersonalStatus.choices, default=PersonalStatus.student)
     position = models.TextField("Должность", blank=True, default="", help_text="Должность или группа")
     contact_info = models.TextField("Контактная информация", blank=True, default="", help_text="Контактная информация")
+    creation_date = models.DateField("Дата создания", auto_now_add=True, blank=True)
 
     @staticmethod
     def get_invites(user: "User") -> List["User"]:

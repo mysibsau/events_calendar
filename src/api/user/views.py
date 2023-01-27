@@ -4,7 +4,7 @@ from rest_framework import filters
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken as StandartObtainAuthToken
 from rest_framework.decorators import action
-from rest_framework.mixins import UpdateModelMixin
+from rest_framework.mixins import UpdateModelMixin, DestroyModelMixin
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -17,8 +17,10 @@ from api.user.serializer import (
     InviteSerializer,
     MyInvitesSerializer,
     UserSerializer,
+    DeleteUserSerializer
 )
 from apps.user.models import Invite, User, UserRole
+from apps.events.models.event import Event
 
 
 class ObtainAuthToken(StandartObtainAuthToken):
@@ -47,7 +49,7 @@ class StandardResultsSetPagination(PageNumberPagination):
     page_size_query_param = "page_size"
 
 
-class UserViewSet(ReadOnlyModelViewSet, UpdateModelMixin):
+class UserViewSet(ReadOnlyModelViewSet, UpdateModelMixin, DestroyModelMixin):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
@@ -70,6 +72,38 @@ class UserViewSet(ReadOnlyModelViewSet, UpdateModelMixin):
         if request.user != self.get_object():
             return Response({"error": "вы не можете редактировать других пользователей"}, status=403)
         return super().update(request, *args, **kwargs)
+
+    @action(detail=True, methods=['delete'])
+    def delete_user(self, request, pk=None):
+        delete_user = self.get_object()
+        serializer = DeleteUserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        transfer_user = User.objects.filter(id=request.data["user_for_transfer"]).first()
+
+        if delete_user.role == UserRole.author:
+            events = Event.objects.all().filter(author=delete_user)
+            if events:
+                for event in events:
+                    event.author = transfer_user
+                    event.is_transferred = True
+                    event.save()
+
+            delete_user.delete()
+            return Response({"detail": "Пользователь успешно удален"}, status=200)
+
+        if delete_user.role == UserRole.moderator and transfer_user.role == UserRole.moderator:
+            invites = Invite.objects.all().filter(user=delete_user)
+            if invites:
+                for invite in invites:
+                    invite.user = transfer_user
+                    invite.save()
+
+            delete_user.delete()
+            return Response({"detail": "Пользователь успешно удален"}, status=200)
+
+        else:
+            return Response({"detail": "Автор не может перенять других пользователей"}, status=403)
 
     @swagger_auto_schema(request_body=CreateInviteSerializer, responses={200: InviteSerializer})
     @action(detail=False, methods=["post"])
@@ -100,7 +134,7 @@ class UserViewSet(ReadOnlyModelViewSet, UpdateModelMixin):
                 {'response': 'У вас недостаточно прав'}
             )
         authors_list = []
-        authors = User.objects.all().filter(role=0)
+        authors = User.objects.all().filter(role=UserRole.author)
         for author in authors:
             authors_list.append(UserSerializer(author).data)
 
@@ -113,7 +147,7 @@ class UserViewSet(ReadOnlyModelViewSet, UpdateModelMixin):
                 {'response': 'У вас недостаточно прав'}
             )
         moderators_list = []
-        moderators = User.objects.all().filter(role=1)
+        moderators = User.objects.all().filter(role=UserRole.moderator)
         for moderator in moderators:
             moderators_list.append(UserSerializer(moderator).data)
 

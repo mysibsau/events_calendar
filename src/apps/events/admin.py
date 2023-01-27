@@ -24,6 +24,7 @@ class EventAdmin(admin.ModelAdmin):
 
     fields = (
         ("name", "direction"),
+        "comment",
         "free_plan",
         ("level", "role", "format"),
         ("educational_work_in_opop", "hours_count"),

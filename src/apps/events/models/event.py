@@ -112,6 +112,8 @@ class Event(LifecycleModel):
     verified_date = models.DateField("Дата верификации", blank=True, null=True)
     group = models.ForeignKey(EventGroup, models.SET_NULL, "events", null=True, blank=True)
     report = models.ForeignKey(Report, models.SET_NULL, 'event', null=True, blank=True)
+    comment = models.TextField("Комментарий", null=True, blank=True)
+    is_transferred = models.BooleanField(default=False, verbose_name="Переданно ли мероприятие")
 
     class Meta:
         verbose_name = "Мероприятие"
@@ -133,10 +135,12 @@ class Event(LifecycleModel):
             
         self.save()
 
-    def reject(self):
+    def reject(self, comment):
         self.status = {
             EventStatus.in_process: EventStatus.rejected,
             EventStatus.wait_for_report: EventStatus.rejected_report,
             EventStatus.wait_for_report_verified: EventStatus.rejected_report,
         }.get(self.status, EventStatus.in_process)
+
+        self.comment = comment
         self.save()

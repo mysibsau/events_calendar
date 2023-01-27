@@ -45,7 +45,7 @@ class AuthTokenSerializer(AuthTokenSerializerDefault):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "username", "first_name", "last_name", "contact_info", "role", "status", "position")
+        fields = ("id", "username", "first_name", "last_name", "contact_info", "role", "status", "position", "creation_date")
 
 
 class CreateInviteSerializer(serializers.ModelSerializer):
@@ -69,3 +69,7 @@ class EditUser(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("contact_info",)
+
+
+class DeleteUserSerializer(serializers.Serializer):
+    user_for_transfer = serializers.IntegerField(label="ID пользователя которому передают мероприятия/авторов")
