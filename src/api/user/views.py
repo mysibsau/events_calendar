@@ -80,9 +80,10 @@ class UserViewSet(ReadOnlyModelViewSet, UpdateModelMixin, DestroyModelMixin):
         serializer.is_valid(raise_exception=True)
 
         transfer_user = User.objects.filter(id=request.data["user_for_transfer"]).first()
+        events = Event.objects.all().filter(author=delete_user)
 
         if delete_user.role == UserRole.author:
-            events = Event.objects.all().filter(author=delete_user)
+
             if events:
                 for event in events:
                     event.author = transfer_user
@@ -98,6 +99,12 @@ class UserViewSet(ReadOnlyModelViewSet, UpdateModelMixin, DestroyModelMixin):
                 for invite in invites:
                     invite.user = transfer_user
                     invite.save()
+
+            if events:
+                for event in events:
+                    event.author = transfer_user
+                    event.is_transferred = True
+                    event.save()
 
             delete_user.delete()
             return Response({"detail": "Пользователь успешно удален"}, status=200)
