@@ -77,6 +77,12 @@ class LevelSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class OrgRoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.OrganizatorRole
+        fields = "__all__"
+
+
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Role

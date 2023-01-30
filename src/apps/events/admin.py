@@ -15,6 +15,11 @@ class RepAdmin(admin.ModelAdmin):
     pass
 
 
+@admin.register(models.Organiztor)
+class OrgAdmin(admin.ModelAdmin):
+    pass
+
+
 @admin.register(models.Event)
 class EventAdmin(admin.ModelAdmin):
     list_display = ("name", "start_date", "verified_date", "event_actions", "author", "status")
@@ -115,4 +120,9 @@ class CommentAdmin(admin.ModelAdmin):
 
 @admin.register(models.EventGroup)
 class GroupEvent(admin.ModelAdmin):
+    list_display = ("id", "name")
+
+
+@admin.register(models.OrganizatorRole)
+class OrgRoleAdmin(admin.ModelAdmin):
     list_display = ("id", "name")
