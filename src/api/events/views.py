@@ -76,6 +76,7 @@ class EventViewSet(ModelViewSet):
         if error := self.validate_event(event, self.request.user):
             return error
         report = models.Report.objects.create(
+            count_index=request.data['count_index'],
             name=event.name,
             description=event.description,
             organization=event.organization,
