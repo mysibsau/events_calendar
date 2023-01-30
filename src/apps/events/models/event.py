@@ -29,6 +29,7 @@ class Organiztor(models.Model):
 
 
 class Report(models.Model):
+    count_index = models.TextField(verbose_name="Колличественный показатель", default="")
     name = models.CharField("Название мероприятия", max_length=512)
     start_date_fact = models.DateField("Дата начала Факт.")
     stop_date_fact = models.DateField("Дата конца Факт.")
@@ -73,7 +74,6 @@ fields = [
 
 
 class Event(LifecycleModel):
-    count_index = models.TextField(verbose_name="Колличественный показатель", default="")
     direction = models.CharField(max_length=256, verbose_name="Направление воспитательных работ", null=True, blank=True)
     description = models.TextField(verbose_name="Описание", default="")
     name = models.CharField("Название мероприятия", max_length=512)
@@ -108,7 +108,7 @@ class Event(LifecycleModel):
     group = models.ForeignKey(EventGroup, models.SET_NULL, "events", null=True, blank=True)
     report = models.ForeignKey(Report, models.SET_NULL, 'event', null=True, blank=True)
     comment = models.TextField("Комментарий", null=True, blank=True)
-    is_transferred = models.BooleanField(default=False, verbose_name="Переданно ли мероприятие")
+    original_author = models.CharField(max_length=256, verbose_name="Изначальный автор", null=True, blank=True, default=None)
 
     class Meta:
         verbose_name = "Мероприятие"
