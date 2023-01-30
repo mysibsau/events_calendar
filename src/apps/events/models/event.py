@@ -7,6 +7,7 @@ from .format import Format
 from .level import Level
 from .organization import Organization
 from .role import Role
+from .organizator_role import OrganizatorRole
 
 
 User = settings.AUTH_USER_MODEL
@@ -23,7 +24,7 @@ class EventStatus(models.TextChoices):
 
 class Organiztor(models.Model):
     name = models.CharField(max_length=255)
-    position = models.CharField(max_length=255)
+    position = models.ForeignKey(OrganizatorRole, on_delete=models.SET_NULL, null=True, blank=True)
     description = models.TextField()
 
 

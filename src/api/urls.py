@@ -14,6 +14,7 @@ router.register("reference/levels", event_views.LevelViewSet)
 router.register("reference/roles", event_views.RoleViewSet)
 router.register("reference/formats", event_views.FormatViewSet)
 router.register("reference/organizations", event_views.OrganizationViewSet)
+router.register("reference/organizator_roles", event_views.OrgRoleViewSet)
 
 
 urls = [

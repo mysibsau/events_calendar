@@ -166,6 +166,11 @@ class DirectionViewSet(mixins.ListModelMixin, GenericViewSet):
     filter_fields = ["id", "name"]
 
 
+class OrgRoleViewSet(mixins.ListModelMixin, GenericViewSet):
+    serializer_class = serializers.OrgRoleSerializer
+    queryset = models.OrganizatorRole.objects.all()
+
+
 class LevelViewSet(mixins.ListModelMixin, GenericViewSet):
     serializer_class = serializers.LevelSerializer
     queryset = models.Level.objects.all()

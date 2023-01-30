@@ -5,6 +5,7 @@ from .format import Format
 from .level import Level
 from .organization import Organization
 from .role import Role
+from .organizator_role import OrganizatorRole
 
 __all__ = [
     Direction,
@@ -16,5 +17,6 @@ __all__ = [
     Event,
     EventGroup,
     Organiztor,
-    Report
+    Report,
+    OrganizatorRole
 ]
