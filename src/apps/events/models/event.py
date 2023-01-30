@@ -37,9 +37,8 @@ class Report(models.Model):
     coverage_participants_fact = models.PositiveSmallIntegerField("Охват участников (факт.)", blank=True, null=True)
     links = models.TextField("Ссылки на материалы в интернете о мероприятии (факт.)", blank=True)
     organizators = models.ManyToManyField(Organiztor, null=True, blank=True, verbose_name="Организаторы")
-    organization = models.ForeignKey(
-        Organization,
-        models.SET_NULL,
+    organization = models.CharField(
+        max_length=256,
         verbose_name="Ответственное подразделение",
         null=True,
         blank=True,
