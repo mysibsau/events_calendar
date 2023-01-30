@@ -94,16 +94,16 @@ class UserViewSet(ReadOnlyModelViewSet, UpdateModelMixin, DestroyModelMixin):
             return Response({"detail": "Пользователь успешно удален"}, status=200)
 
         if delete_user.role == UserRole.moderator and transfer_user.role == UserRole.moderator:
-            invites = Invite.objects.all().filter(user=delete_user)
+            invites = Invite.objects.all().filter(author=delete_user)
             if invites:
                 for invite in invites:
-                    invite.user = transfer_user
+                    invite.author = transfer_user
                     invite.save()
 
             if events:
                 for event in events:
                     event.author = transfer_user
-                    event.is_transferred = True
+                    event.original_author = str(delete_user.get_full_name())
                     event.save()
 
             delete_user.delete()
