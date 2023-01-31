@@ -9,12 +9,12 @@ from apps.events.models import Event
 
 def report_exporter(event: Event) -> FileResponse:
     template = DocxTemplate("/".join(__file__.split("/")[:-1]) + "/template.docx")
-    supervisor = "Заместитель директора по ВР" if event.level.name.lower() == "институтский" else "Начальник ОРСП"
+    supervisor = "Заместитель директора по ВР" if event.level.lower() == "институтский" else "Начальник ОРСП"
 
     template.render(
         {
             "event_name": event.report.name,
-            "organization": event.report.organization.name,
+            "organization": event.report.organization,
             "date": f'({event.report.start_date_fact} - {event.report.stop_date_fact})',
             "place": event.report.place_fact,
             "level": event.level,
