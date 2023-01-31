@@ -29,6 +29,7 @@ class Invite(models.Model):
     role = models.IntegerField("Роль", choices=UserRole.choices)
     status = models.IntegerField("Статус", choices=PersonalStatus.choices, default=PersonalStatus.student)
     position = models.TextField("Должность", blank=True, default="", help_text="Должность или группа")
+    contact_info = models.CharField(max_length=128, null=True, blank=True)
 
 
 class User(AbstractUser):

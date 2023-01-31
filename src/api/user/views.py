@@ -123,7 +123,7 @@ class UserViewSet(ReadOnlyModelViewSet, UpdateModelMixin, DestroyModelMixin):
         role = serializer.validated_data["role"]
         if user.role < UserRole.moderator or role >= user.role:
             return Response({"detail": "Недостаточно прав"}, status=403)
-        invite = serializer.save(author=user)
+        invite = serializer.save(author=user, contact_info=serializer.validated_data["contact_info"])
         return Response({"code": invite.id})
 
     @swagger_auto_schema(responses={200: UserSerializer}, request_body=MyInvitesSerializer)
