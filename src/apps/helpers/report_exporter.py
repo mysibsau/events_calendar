@@ -19,6 +19,7 @@ def report_exporter(event: Event) -> FileResponse:
             "place": event.report.place_fact,
             "level": event.level,
             "description": event.description,
+            "count_index": event.report.count_index,
             "links": event.report.links,
             "supervisor": supervisor,
         }

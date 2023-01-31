@@ -17,6 +17,7 @@ from apps.events.services import verification
 from apps.helpers.report_exporter import report_exporter
 from apps.user.models import UserRole
 from apps.events.services.exporters import export_as_csv
+from apps.events.models.event import EventStatus
 
 
 def get_choices(model) -> tuple:
@@ -52,6 +53,12 @@ class EventViewSet(ModelViewSet):
         if self.action == "my":
             return self.queryset.filter(author=self.request.user)
         return self.queryset
+
+    def partial_update(self, request, *args, **kwargs):
+        event = self.get_object()
+        event.status = EventStatus.in_process
+        event.save()
+        return super().partial_update(request, *args, **kwargs)
 
     @action(detail=False)
     def my(self, request):
