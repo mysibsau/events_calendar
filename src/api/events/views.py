@@ -158,7 +158,14 @@ class EventViewSet(ModelViewSet):
 
     @action(detail=False, methods=["get"])
     def get_reports_csv(self, request, pk=None):
-        reports = models.Report.objects.all().filter(event__status=3)
+        events = models.Event.objects.all().filter(status=3)
+        events = self.filter_queryset(queryset=events)
+
+        reports_ids = []
+        for event in events:
+            reports_ids.append(event.report.id)
+
+        reports = models.Report.objects.all().filter(id__in=reports_ids)
 
         return export_as_csv(reports)
 

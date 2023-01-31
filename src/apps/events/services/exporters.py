@@ -4,10 +4,10 @@ from django.db.models import QuerySet
 from django.http import HttpResponse
 from django.utils import timezone
 
-from apps.events.models import Event
+from apps.events.models import Report
 
 
-def export_as_csv(queryset: QuerySet[Event]) -> HttpResponse:
+def export_as_csv(queryset: QuerySet[Report]) -> HttpResponse:
     meta = queryset.model._meta
 
     response = HttpResponse(content_type='text/csv')
