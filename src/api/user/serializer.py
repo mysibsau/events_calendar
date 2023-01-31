@@ -51,10 +51,11 @@ class UserSerializer(serializers.ModelSerializer):
 class CreateInviteSerializer(serializers.ModelSerializer):
     role = serializers.ChoiceField(label="Роль пользователя", choices=UserRole.choices)
     status = serializers.ChoiceField(label="Статус пользователя", choices=PersonalStatus.choices)
+    contact_info = serializers.CharField(label="Контактная информация")
 
     class Meta:
         model = Invite
-        fields = ("role", "position", "status")
+        fields = ("role", "position", "status", "contact_info")
 
 
 class InviteSerializer(serializers.Serializer):

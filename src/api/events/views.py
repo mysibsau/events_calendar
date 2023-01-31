@@ -60,11 +60,13 @@ class EventViewSet(ModelViewSet):
     @swagger_auto_schema(responses={200: serializers.EventDetailSerializer}, request_body=MyInvitesSerializer)
     @action(detail=False, methods=["post"])
     def my_invites(self, request):
+        filterset_class = EventFilter
         serializer = MyInvitesSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = request.user
         invites = user.get_my_invites(serializer.validated_data["role"])
         events = self.queryset.filter(author__in=invites)
+        events = self.filter_queryset(events)
         serializer = self.get_serializer(events, many=True)
         return Response(serializer.data)
 
