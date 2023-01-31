@@ -35,6 +35,7 @@ class AuthTokenSerializer(AuthTokenSerializerDefault):
                 attrs.get("user").role = invite.role
                 attrs.get("user").status = invite.status
                 attrs.get("user").position = invite.position
+                attrs.get("user").contact_info = invite.contact_info
                 attrs.get("user").save()
             else:
                 raise serializers.ValidationError("Неверный код подтверждения")
