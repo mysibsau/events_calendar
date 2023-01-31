@@ -1,6 +1,7 @@
 from itertools import chain
 
 from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as filters
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import mixins, status
 from rest_framework.decorators import action
@@ -18,17 +19,31 @@ from apps.user.models import UserRole
 from apps.events.services.exporters import export_as_csv
 
 
+class EventFilter(filters.FilterSet):
+    level = filters.CharFilter(field_name='level', method='custom_event_filter')
+    direction = filters.CharFilter(field_name='direction', method='custom_event_filter')
+    role = filters.CharFilter(field_name='role', method='custom_event_filter')
+    organization = filters.CharFilter(field_name='organization', method='custom_event_filter')
+    event_format = filters.CharFilter(field_name='format', method='custom_event_filter')
+    educational_work_in_opop = filters.BooleanFilter()
+
+    class Meta:
+        model = models.Event
+        fields = ['level', 'direction', 'role', 'organization', 'event_format', 'educational_work_in_opop']
+
+    def custom_event_filter(self, queryset, name, value):
+        value_list = value.split(u',')
+        return queryset.filter(**{
+            name + "__in": value_list,
+        })
+
+
 class EventViewSet(ModelViewSet):
     serializer_class = serializers.EventDetailSerializer
     queryset = models.Event.objects.all()
     permission_classes = [permissions.IsOwnerOrReadOnly]
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = ("level",
-                     "educational_work_in_opop",
-                     "role",
-                     "format",
-                     "organization",
-                     "direction")
+    filterset_class = EventFilter
 
     def get_queryset(self):
         if self.action == "my":
@@ -38,6 +53,19 @@ class EventViewSet(ModelViewSet):
     @action(detail=False)
     def my(self, request):
         return super().list(request)
+
+    # @action(detail=False, methods=["post"])
+    # def filter(self, request):
+    #     event_serializer = serializers.EventDetailSerializer
+    #     serializer = serializers.FiltersSerializer(data=request.data)
+    #     serializer.is_valid(raise_exception=True)
+    #     events = self.queryset.filter(
+    #         level__in=request.data['level'],
+    #         direction__in=request.data['direction']
+    #     )
+    #     serializer = self.get_serializer(events, many=True)
+    #
+    #     return Response(serializer.data)
 
     @swagger_auto_schema(responses={200: serializers.EventDetailSerializer}, request_body=MyInvitesSerializer)
     @action(detail=False, methods=["post"])

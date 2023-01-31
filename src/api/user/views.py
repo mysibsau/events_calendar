@@ -87,7 +87,8 @@ class UserViewSet(ReadOnlyModelViewSet, UpdateModelMixin, DestroyModelMixin):
             if events:
                 for event in events:
                     event.author = transfer_user
-                    event.original_author = str(delete_user.get_full_name())
+                    if event.original_author is None:
+                        event.original_author = str(delete_user.get_full_name())
                     event.save()
 
             delete_user.delete()
@@ -103,7 +104,8 @@ class UserViewSet(ReadOnlyModelViewSet, UpdateModelMixin, DestroyModelMixin):
             if events:
                 for event in events:
                     event.author = transfer_user
-                    event.original_author = str(delete_user.get_full_name())
+                    if event.original_author is None:
+                        event.original_author = str(delete_user.get_full_name())
                     event.save()
 
             delete_user.delete()
