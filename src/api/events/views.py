@@ -168,13 +168,7 @@ class EventViewSet(ModelViewSet):
         events = models.Event.objects.all().filter(status=3)
         events = self.filter_queryset(queryset=events)
 
-        reports_ids = []
-        for event in events:
-            reports_ids.append(event.report.id)
-
-        reports = models.Report.objects.all().filter(id__in=reports_ids)
-
-        return export_as_csv(reports)
+        return export_as_csv(events)
 
     @action(detail=True, methods=["post"])
     def verificate(self, request, pk=None):
