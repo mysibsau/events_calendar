@@ -20,21 +20,12 @@ from apps.events.services.exporters import export_as_csv
 from apps.events.models.event import EventStatus
 
 
-def get_choices(model) -> tuple:
-    queryset = model.objects.all()
-    choices = []
-    for item in queryset:
-        choices.append((item.name, item.name))
-
-    return tuple(choices)
-
-
 class EventFilter(filters.FilterSet):
-    level = filters.MultipleChoiceFilter(field_name='level', choices=get_choices(models.Level), conjoined=False)
-    direction = filters.MultipleChoiceFilter(field_name='direction', choices=get_choices(models.Direction), conjoined=False)
-    role = filters.filters.MultipleChoiceFilter(field_name='role', choices=get_choices(models.Role), conjoined=False)
-    organization = filters.filters.MultipleChoiceFilter(field_name='organization', choices=get_choices(models.Organization), conjoined=False)
-    event_format = filters.MultipleChoiceFilter(field_name='format', choices=get_choices(models.Format), conjoined=False)
+    level = filters.MultipleChoiceFilter(field_name='level', choices=models.Level.objects.values_list('name', 'name'), conjoined=False)
+    direction = filters.MultipleChoiceFilter(field_name='direction', choices=models.Direction.objects.values_list('name', 'name'), conjoined=False)
+    role = filters.filters.MultipleChoiceFilter(field_name='role', choices=models.Role.objects.values_list('name', 'name'), conjoined=False)
+    organization = filters.filters.MultipleChoiceFilter(field_name='organization', choices=models.Organization.objects.values_list('name', 'name'), conjoined=False)
+    event_format = filters.MultipleChoiceFilter(field_name='format', choices=models.Format.objects.values_list('name', 'name'), conjoined=False)
     educational_work_in_opop = filters.BooleanFilter()
 
     class Meta:
