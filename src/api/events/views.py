@@ -129,13 +129,7 @@ class EventViewSet(ModelViewSet):
         if error := self.validate_event(event, self.request.user):
             return error
 
-        # if self.request.user.role in [UserRole.administrator, UserRole.moderator]:
         return report_exporter(event)
-
-        # return Response(
-        #     {"response": "Вы не можете выполнить данное действие"},
-        #     status=status.HTTP_403_FORBIDDEN,
-        # )
 
     @action(detail=True, methods=["get"])
     def get_report(self, request, pk=None):

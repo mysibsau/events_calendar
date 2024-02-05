@@ -1,5 +1,4 @@
 import os
-from docx import Document
 
 from django.http import HttpResponse
 from docxtpl import DocxTemplate
@@ -16,11 +15,11 @@ def report_exporter(event: Event) -> HttpResponse:
     supervisor = "Заместитель директора по ВР" if event.level.lower() == "институтский" else "Руководитель ЦСО"
 
     table = []
-    for count, organizator in enumerate(event.report.organizators.all()):
+    for count, organizer in enumerate(event.report.organizators.all()):
         human = {'id': str(count + 1),
-                 'name': organizator.name,
-                 'position': organizator.position,
-                 'description': organizator.description
+                 'name': organizer.name,
+                 'position': organizer.position,
+                 'description': organizer.description
                  }
         table.append(human)
 
