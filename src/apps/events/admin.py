@@ -35,6 +35,7 @@ class EventAdmin(admin.ModelAdmin):
         ("educational_work_in_opop", "hours_count"),
         ("start_date", "stop_date"),
         "place",
+        'archived',
         ("coverage_participants_plan", "number_organizers"),
         "organization",
         "coverage_participants_fact",
