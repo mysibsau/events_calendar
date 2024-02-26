@@ -172,6 +172,15 @@ class EventViewSet(ModelViewSet):
 
         return Response({"status": event.status})
 
+    @action(detail=True, methods=["post"])
+    def archived(self, request, pk=None):
+        event = self.get_object()
+
+        event.archived = not event.archived
+        event.save()
+
+        return Response({"status": 'ok'})
+
 
 class DirectionViewSet(mixins.ListModelMixin, GenericViewSet):
     serializer_class = serializers.DirectionSerializer

@@ -108,6 +108,7 @@ class Event(LifecycleModel):
     report = models.ForeignKey(Report, models.SET_NULL, 'event', null=True, blank=True)
     comment = models.TextField("Комментарий", null=True, blank=True)
     original_author = models.CharField(max_length=256, verbose_name="Изначальный автор", null=True, blank=True, default=None)
+    archived = models.BooleanField(verbose_name="Архивировать мероприятие", default=False)
 
     class Meta:
         verbose_name = "Мероприятие"
